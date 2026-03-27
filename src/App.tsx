@@ -20,7 +20,8 @@ import {
   HelpCircle,
   Plus,
   Minus,
-  User
+  User,
+  Sparkles
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -284,52 +285,124 @@ function LandingPage() {
 
       {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
-        <HeroBackground />
+  <HeroBackground />
 
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center max-w-5xl relative z-10"
-        >
-          <div className="flex flex-wrap justify-center gap-4 mb-8">
-            <span className="px-4 py-1 rounded-full border border-border text-xs font-mono uppercase tracking-widest">
-              8–13 мая 2026
-            </span>
-            <span className="px-4 py-1 rounded-full border border-border text-xs font-mono uppercase tracking-widest">
-              УОК «Лесное озеро»
-            </span>
-          </div>
+  <motion.div 
+    initial={{ opacity: 0, y: 30 }}
+    animate={{ opacity: 1, y: 0 }}
+    className="text-center max-w-5xl relative z-10"
+  >
+    <div className="flex flex-wrap justify-center gap-4 mb-8">
+      <span className="px-4 py-1 rounded-full border border-border text-xs font-mono uppercase tracking-widest">
+        8–13 мая 2026
+      </span>
+      <span className="px-4 py-1 rounded-full border border-border text-xs font-mono uppercase tracking-widest">
+        УОК «Лесное озеро»
+      </span>
+    </div>
 
-          <h1 className="text-5xl md:text-8xl font-bold tracking-tighter mb-8 leading-[0.9]">
-            Весенняя школа <br />
-            <span className="font-serif italic font-normal text-primary">ИТ и Искусственный интеллект</span>
-          </h1>
+    {/* Анимированный заголовок с ребрендингом */}
+    <div className="relative min-h-[240px] md:min-h-[320px] mb-8">
+      {/* Старый заголовок */}
+      <motion.div
+        initial={{ opacity: 1, y: 0 }}
+        animate={{ 
+          opacity: [1, 1, 0],
+          y: [0, 0, -20],
+          scale: [1, 1, 0.95]
+        }}
+        transition={{ 
+          duration: 2.5,
+          times: [0, 0.6, 1],
+          ease: "easeInOut"
+        }}
+        className="absolute inset-0 flex flex-col items-center justify-center"
+      >
+        <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
+          Школа <br />
+          <span className="sans-serif font-normal text-primary">
+            ИТ и математического моделирования
+          </span>
+        </h1>
+      </motion.div>
 
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12">
-            Проектно-образовательный интенсив, объединяющий хакатон, форум и нетворкинг для лучших студентов страны.
-          </p>
+      <motion.div
+        initial={{ scaleX: 0, originX: 1 }}
+        animate={{ scaleX: [0, 1, 1, 0] }}
+        transition={{ 
+          duration: 1.5,
+          times: [0, 0.4, 0.6, 1],
+          delay: 1.2,
+          ease: "easeInOut"
+        }}
+        className="absolute inset-0 bg-gradient-to-r from-background via-background to-transparent z-10"
+        style={{ transformOrigin: "right" }}
+      />
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-16">
-            <motion.button 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-10 py-4 bg-primary text-white rounded-full font-semibold text-lg shadow-xl shadow-primary/20 cursor-pointer"
-            >
-              Подать заявку
-            </motion.button>
-            <Countdown />
-          </div>
-        </motion.div>
+      <motion.div
+        initial={{ scaleX: 0, originX: 0 }}
+        animate={{ scaleX: [0, 1, 1, 0] }}
+        transition={{ 
+          duration: 1.5,
+          times: [0, 0.4, 0.6, 1],
+          delay: 2.2,
+          ease: "easeInOut"
+        }}
+        className="absolute inset-0 bg-gradient-to-l from-background via-background to-transparent z-10"
+        style={{ transformOrigin: "left" }}
+      />
 
-        <motion.div 
-          animate={{ y: [0, 10, 0] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground"
-        >
-          <ChevronDown className="w-6 h-6" />
-        </motion.div>
-      </section>
+      {/* Эффект молнии/вспышки */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ 
+          opacity: [0, 1, 0],
+          scale: [0.8, 2.5, 2]
+        }}
+        transition={{ duration: 1, delay: 2.8 }}
+        className="absolute inset-0 bg-primary/10 blur-xl rounded-full z-5"
+      />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.6, delay: 3.2, ease: "easeOut" }}
+        className="flex flex-col items-center justify-center"
+      >
+        <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
+          Весенняя школа <br />
+          <span className="font-serif italic font-normal text-primary">
+            ИТ и Искусственный интеллект
+          </span>
+        </h1>
+      </motion.div>
+    </div>
+
+    <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12">
+      Проектно-образовательный интенсив, объединяющий хакатон, форум и нетворкинг для лучших студентов.
+    </p>
+
+    <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-16">
+      <motion.button 
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' })}
+        className="px-10 py-4 bg-primary text-white rounded-full font-semibold text-lg shadow-xl shadow-primary/20 cursor-pointer"
+      >
+        Подать заявку
+      </motion.button>
+      <Countdown />
+    </div>
+  </motion.div>
+
+  <motion.div 
+    animate={{ y: [0, 10, 0] }}
+    transition={{ repeat: Infinity, duration: 2 }}
+    className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground"
+  >
+    <ChevronDown className="w-6 h-6" />
+  </motion.div>
+</section>
 
       {/* Organizers */}
       <section className="py-20">
