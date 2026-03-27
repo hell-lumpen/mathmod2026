@@ -799,9 +799,9 @@ function LandingPage() {
               <Link to="/rules" className="hover:text-primary transition-colors">Положение о состязании</Link>
             </div>
           </div>
-        </div>
-        <div className="pt-8 text-center text-[10px] uppercase tracking-widest text-muted-foreground max-w-[1000px] mx-auto">
+          <div className="pt-8 text-center text-[10px] uppercase tracking-widest text-muted-foreground max-w-[1000px] mx-auto">
           <p>Школа проводится с целью развития кадрового потенциала в области информационных технологий, искусственного интеллекта и математического моделирования, привлечения студентов и аспирантов к научно-проектной деятельности, а также организации долгосрочных поездок студентов, обучающихся по образовательным программам топ-уровня, для участия в обучении, исследовательских проектах и  программах с компаниями-партнерами в рамках исполнения обязательств МАИ и Финуниверситета по договорам с АНО "Аналитический центр при Правительстве Российской Федерации"</p>
+        </div>
         </div>
       </footer>
     </div>
