@@ -223,10 +223,10 @@ const Countdown = () => {
         return;
       }
       setTimeLeft({
-        days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
-        mins: Math.floor((diff / 1000 / 60) % 60),
-        secs: Math.floor((diff / 1000) % 60),
+        "дней": Math.floor(diff / (1000 * 60 * 60 * 24)),
+        "часов": Math.floor((diff / (1000 * 60 * 60)) % 24),
+        "минут": Math.floor((diff / 1000 / 60) % 60),
+        "секунд": Math.floor((diff / 1000) % 60),
       });
     }, 1000);
     return () => clearInterval(interval);
