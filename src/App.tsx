@@ -320,7 +320,7 @@ function LandingPage() {
       >
         <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
           Школа <br />
-          <span className="sans-serif font-normal text-primary">
+          <span className="sans-serif font-bold">
             ИТ и математического моделирования
           </span>
         </h1>
