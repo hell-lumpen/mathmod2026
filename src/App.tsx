@@ -312,7 +312,7 @@ function LandingPage() {
           scale: [1, 1, 0.95]
         }}
         transition={{ 
-          duration: 2.5,
+          duration: 1.5,
           times: [0, 0.6, 1],
           ease: "easeInOut"
         }}
@@ -360,7 +360,7 @@ function LandingPage() {
           scale: [0.8, 2.5, 2]
         }}
         transition={{ duration: 1, delay: 2.8 }}
-        className="absolute inset-0 bg-primary/10 blur-xl rounded-full z-5"
+        className="absolute inset-0 bg-primary/30 blur-2xl rounded-full z-5"
       />
 
       <motion.div
