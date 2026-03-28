@@ -369,7 +369,7 @@ function LandingPage() {
           initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{ duration: 0.5, delay: 3.8, ease: "easeOut" }}
-          className="mb-3 md:absolute md:-top-8 md:-right-20 px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap"
+          className="mb-3 md:absolute md:-top-8 md:-right-5 px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap"
         >
           New
         </motion.span>
@@ -726,7 +726,7 @@ function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider opacity-50">Дата рождения</label>
-                <input type="date" {...register('birthDate')} className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
+                <input type="date" {...register('birthDate')} className="w-full p-4 text-base rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
                 {errors.birthDate && <p className="text-red-500 text-xs">{errors.birthDate.message}</p>}
               </div>
               <div className="space-y-2">
