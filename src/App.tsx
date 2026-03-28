@@ -363,20 +363,20 @@ function LandingPage() {
         initial={{ opacity: 0, y: 20, scale: 0.95 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.6, delay: 3.2, ease: "easeOut" }}
-        className="flex flex-col items-center justify-center"
+        className="flex flex-col items-center justify-center relative"
       >
+        <motion.span
+          initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
+          animate={{ opacity: 1, scale: 1, rotate: 0 }}
+          transition={{ duration: 0.5, delay: 3.8, ease: "easeOut" }}
+          className="mb-3 md:absolute md:-top-8 md:-right-20 px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap"
+        >
+          New
+        </motion.span>
         <div className="relative inline-block mb-4">
           <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
             Весенняя школа
           </h1>
-          <motion.span
-            initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: 0.5, delay: 3.8, ease: "easeOut" }}
-            className="relative md:absolute md:-top-2 md:-right-20 inline-block md:inline-block ml-2 md:ml-0 px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap"
-          >
-            New
-          </motion.span>
         </div>
         <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9] text-center">
           <span className="font-serif italic font-normal text-primary">
