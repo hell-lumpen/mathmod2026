@@ -365,7 +365,7 @@ function LandingPage() {
         transition={{ duration: 0.6, delay: 3.2, ease: "easeOut" }}
         className="flex flex-col items-center justify-center"
       >
-        <div className="flex items-start gap-3 md:gap-4 justify-center mb-4">
+        <div className="relative inline-block mb-4">
           <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
             Весенняя школа
           </h1>
@@ -373,7 +373,7 @@ function LandingPage() {
             initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.5, delay: 3.8, ease: "easeOut" }}
-            className="inline-block px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap mt-1 md:mt-3"
+            className="absolute -top-2 -right-16 md:-right-20 px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap"
           >
             New
           </motion.span>
