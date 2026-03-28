@@ -277,13 +277,11 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen selection:bg-primary selection:text-white">      
-      {/* Progress Bar */}
       <motion.div 
         className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left"
         style={{ scaleX: scrollYProgress }}
       />
 
-      {/* Hero Section */}
       <section ref={heroRef} className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
   <HeroBackground />
 
@@ -301,9 +299,7 @@ function LandingPage() {
       </span>
     </div>
 
-    {/* Анимированный заголовок с ребрендингом */}
     <div className="relative min-h-[240px] md:min-h-[320px] mb-8">
-      {/* Старый заголовок */}
       <motion.div
         initial={{ opacity: 1, y: 0 }}
         animate={{ 
@@ -312,7 +308,7 @@ function LandingPage() {
           scale: [1, 1, 0.95]
         }}
         transition={{ 
-          duration: 1.5,
+          duration: 2,
           times: [0, 0.6, 1],
           ease: "easeInOut"
         }}
@@ -330,7 +326,7 @@ function LandingPage() {
         initial={{ scaleX: 0, originX: 1 }}
         animate={{ scaleX: [0, 1, 1, 0] }}
         transition={{ 
-          duration: 1.5,
+          duration: 2.5,
           times: [0, 0.4, 0.6, 1],
           delay: 1.2,
           ease: "easeInOut"
@@ -343,7 +339,7 @@ function LandingPage() {
         initial={{ scaleX: 0, originX: 0 }}
         animate={{ scaleX: [0, 1, 1, 0] }}
         transition={{ 
-          duration: 1.5,
+          duration: 2.5,
           times: [0, 0.4, 0.6, 1],
           delay: 2.2,
           ease: "easeInOut"
