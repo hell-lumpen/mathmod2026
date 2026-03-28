@@ -726,7 +726,7 @@ function LandingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider opacity-50">Дата рождения</label>
-                <input type="date" {...register('birthDate')} className="w-full p-4 text-base rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
+                <input type="date" {...register('birthDate')} className="w-full px-4 py-2 text-base rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all appearance-none [-webkit-appearance:none]" />
                 {errors.birthDate && <p className="text-red-500 text-xs">{errors.birthDate.message}</p>}
               </div>
               <div className="space-y-2">
