@@ -373,7 +373,7 @@ function LandingPage() {
             initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 0.5, delay: 3.8, ease: "easeOut" }}
-            className="absolute -top-2 -right-16 md:-right-20 px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap"
+            className="relative md:absolute md:-top-2 md:-right-20 inline-block md:inline-block ml-2 md:ml-0 px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap"
           >
             New
           </motion.span>
