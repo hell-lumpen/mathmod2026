@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence, useScroll } from 'motion/react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import {
@@ -16,7 +16,6 @@ import {
   Clock,
   Plus,
   Minus,
-  User,
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -226,8 +225,8 @@ const STATS = [
 ];
 
 const featureTiles = [
-  { icon: Calendar, title: 'Лекции, командная работа и защита решений в одном ритме.', tone: 'bg-blue-500 text-white' },
-  { icon: Briefcase, title: 'Кейсы от компаний-партнеров и работа над реальными сценариями.', tone: 'bg-pink-500 text-white' },
+  { icon: Calendar, title: 'Лекции и командная работа в одном ритме.', tone: 'bg-blue-500 text-white' },
+  { icon: Briefcase, title: 'Реальные задачи от компаний-партнеров', tone: 'bg-pink-500 text-white' },
 ];
 
 const AUDIENCE = [
@@ -245,10 +244,26 @@ const AUDIENCE = [
   },
 ];
 
+const HERO_PHRASES = [
+  'идеи рождаются',
+  'данные превращаются',
+  'команды собираются',
+  'баги превращаются'
+];
+
 const sectionClass = 'rounded-[32px] border border-slate-200 bg-white p-6 md:p-8';
 const fieldClass =
   'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-colors duration-200 placeholder:text-slate-400 focus:border-primary';
 const sectionShellClass = 'mx-auto max-w-7xl rounded-[36px] border border-slate-200 bg-white px-4 py-16 md:px-8 md:py-20';
+
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .map((part) => part[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
+}
 
 function SectionTitle({
   label,
@@ -297,8 +312,7 @@ function SectionTitle({
 function LandingPage() {
   const { scrollYProgress } = useScroll();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [activeExpert, setActiveExpert] = useState(0);
-
+  const [activeHeroPhrase, setActiveHeroPhrase] = useState(0);
   const {
     register,
     handleSubmit,
@@ -317,6 +331,14 @@ function LandingPage() {
   const selectedUniversity = watch('university');
   const selectedSkills = watch('skills');
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveHeroPhrase((current) => (current + 1) % HERO_PHRASES.length);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   const onSubmit = (data: RegistrationForm) => {
     console.log('Form submitted:', data);
     alert('Заявка успешно отправлена!');
@@ -330,12 +352,6 @@ function LandingPage() {
       { shouldValidate: true },
     );
   };
-
-  const currentExpert = EXPERTS[activeExpert];
-  const prevExpert = () =>
-    setActiveExpert((prev) => (prev - 1 + EXPERTS.length) % EXPERTS.length);
-  const nextExpert = () =>
-    setActiveExpert((prev) => (prev + 1) % EXPERTS.length);
 
   return (
     <div className="relative min-h-screen overflow-x-hidden">
@@ -359,8 +375,21 @@ function LandingPage() {
               Школа ИТ и искусственного интеллекта
             </p>
             <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.88] tracking-[-0.08em] sm:text-6xl md:text-7xl lg:text-[6.3rem]">
-              Школа, в которой
-              <span className="block text-primary">идеи превращаются</span>
+              <span className="block">Школа, в которой</span>
+              <span className="relative block min-h-[0.95em] max-w-[100px] text-primary">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={HERO_PHRASES[activeHeroPhrase]}
+                    initial={{ opacity: 0, y: 18 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -18 }}
+                    transition={{ duration: 0.35 }}
+                    className="block"
+                  >
+                    {HERO_PHRASES[activeHeroPhrase]}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
               <span className="block">в проект</span>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
@@ -397,11 +426,12 @@ function LandingPage() {
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              {featureTiles.slice(0, 2).map(({ icon: Icon, title, text, tone }) => (
+              {featureTiles.slice(0, 2).map(({ icon: Icon, title, tone }) => (
                 <div key={title} className={cn('rounded-[28px] p-5', tone)}>
                   <Icon className="h-6 w-6" />
-                  <h3 className="mt-5 text-2xl font-semibold tracking-[-0.05em]">{title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed opacity-85">{text}</p>
+                  <p className="mt-5 text-lg font-semibold leading-relaxed tracking-[-0.03em]">
+                    {title}
+                  </p>
                 </div>
               ))}
             </div>
@@ -517,7 +547,7 @@ function LandingPage() {
           <div className={sectionShellClass}>
           <SectionTitle
             label="Партнеры"
-            title="Компании, которые помогают школе содержанием и задачами"
+            title="Компании - партнеры"
             subtitle="Компании, которые поддерживают Школу и предоставляют экспертную поддержку."
           />
 
@@ -651,96 +681,49 @@ function LandingPage() {
           <div className={sectionShellClass}>
           <SectionTitle
             label="Эксперты"
-            title="Эксперты, с которыми вы будете работать во время школы"
-            subtitle="Эксперты школы сопровождают участников в проектной работе."
+            title="Эксперты школы"
           />
 
-          <div className="rounded-[32px] border border-slate-200 bg-white p-4 md:p-6">
-            <AnimatePresence mode="wait">
+          <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            {EXPERTS.map((expert, index) => (
               <motion.article
-                key={currentExpert.name}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.3 }}
-                className="grid gap-6 rounded-[28px] p-5 md:grid-cols-[240px_1fr] md:p-6"
+                key={expert.name}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.4, delay: index * 0.03 }}
+                className="min-w-[272px] snap-start overflow-hidden rounded-[28px] border border-slate-200 bg-white md:min-w-[300px]"
               >
-                <div className="flex items-center justify-center overflow-hidden rounded-[24px] border border-slate-200 bg-white aspect-[4/5]">
-                  {currentExpert.img ? (
+                <div className="aspect-[4/5] overflow-hidden border-b border-slate-200 bg-slate-100">
+                  {expert.img ? (
                     <img
-                      src={currentExpert.img}
-                      alt={currentExpert.name}
+                      src={expert.img}
+                      alt={expert.name}
                       className="h-full w-full object-cover"
                       referrerPolicy="no-referrer"
                     />
                   ) : (
-                    <User className="h-16 w-16 text-slate-300" />
+                    <div className="flex h-full items-center justify-center bg-[#f2f4f8]">
+                      <div className="flex h-20 w-20 items-center justify-center rounded-full border border-slate-200 bg-white text-2xl font-semibold tracking-[-0.06em] text-slate-700">
+                        {getInitials(expert.name)}
+                      </div>
+                    </div>
                   )}
                 </div>
 
-                <div className="flex flex-col justify-between gap-6">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-500">
-                      Эксперт школы
-                    </p>
-                    <h3 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-slate-950 md:text-4xl">
-                      {currentExpert.name}
-                    </h3>
-                    <p className="mt-3 text-sm font-semibold uppercase tracking-[0.24em] text-primary">
-                      {currentExpert.role}
-                    </p>
-                    <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
-                      {currentExpert.company}
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-4 border-slate-200 pt-5">
-                    <div className="text-sm text-slate-500">
-                      {String(activeExpert + 1).padStart(2, '0')} / {String(EXPERTS.length).padStart(2, '0')}
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={prevExpert}
-                        className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700"
-                        aria-label="Предыдущий эксперт"
-                      >
-                        <ChevronRight className="h-5 w-5 rotate-180" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={nextExpert}
-                        className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700"
-                        aria-label="Следующий эксперт"
-                      >
-                        <ChevronRight className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </motion.article>
-            </AnimatePresence>
-
-            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {EXPERTS.map((expert, index) => (
-                <button
-                  key={expert.name}
-                  type="button"
-                  onClick={() => setActiveExpert(index)}
-                  className={cn(
-                    'rounded-[22px] border px-4 py-4 text-left transition-colors',
-                    activeExpert === index
-                      ? 'border-slate-950 bg-slate-950 text-white'
-                      : 'border-slate-200 bg-white text-slate-950',
-                  )}
-                >
-                  <p className="text-sm font-semibold tracking-[-0.02em]">{expert.name}</p>
-                  <p className={cn('mt-2 text-[11px] uppercase tracking-[0.22em]', activeExpert === index ? 'text-white/70' : 'text-slate-500')}>
+                <div className="space-y-3 p-5">
+                  <h3 className="text-xl font-semibold leading-tight tracking-[-0.04em] text-slate-950">
+                    {expert.name}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-slate-700">
                     {expert.role}
                   </p>
-                </button>
-              ))}
-            </div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-400">
+                    {expert.company}
+                  </p>
+                </div>
+              </motion.article>
+            ))}
           </div>
           </div>
         </section>
