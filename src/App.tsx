@@ -3,32 +3,26 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
+import { useState } from 'react';
+import { motion, AnimatePresence, useScroll } from 'motion/react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import { 
-  Calendar, 
-  MapPin, 
-  ChevronRight, 
-  Users, 
-  Briefcase, 
-  Award, 
+import {
+  Calendar,
+  MapPin,
+  ChevronRight,
+  Users,
+  Briefcase,
+  Award,
   Clock,
-  ChevronDown,
-  ExternalLink,
-  CheckCircle2,
-  HelpCircle,
   Plus,
   Minus,
   User,
-  Sparkles
 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { cn } from './lib/utils';
 import HeroBackground from './components/HeroBackground';
-import ThemeToggle from './components/ThemeToggle';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import CompetitionRules from './pages/CompetitionRules';
 
@@ -38,8 +32,6 @@ import psbLogo from './static/PSB_logo_original_png.png';
 import vitLogo from './static/vkusnoitochka.png';
 import t1Logo from './static/T1_Logo.png';
 import yandexCloudLogo from './static/yc_logo.png';
-
-// --- Types & Schemas ---
 
 const registrationSchema = z.object({
   lastName: z.string().min(2, 'Минимум 2 символа'),
@@ -58,88 +50,119 @@ const registrationSchema = z.object({
   finGroup: z.string().optional(),
   skills: z.array(z.string()).min(1, 'Выберите хотя бы один навык'),
   motivation: z.string().min(50, 'Напишите подробнее (минимум 50 символов)'),
-  consent: z.boolean().refine(val => val === true, 'Необходимо согласие на обработку данных'),
+  consent: z.boolean().refine((val) => val === true, 'Необходимо согласие на обработку данных'),
 });
 
 type RegistrationForm = z.infer<typeof registrationSchema>;
 
 const PARTNERS = [
-    {
+  {
     name: 'ИТ-холдинг Т1',
     logo: t1Logo,
     case: 'В разработке',
-    description: 'Один из крупнейших российских ИТ-холдингов, специализирующийся на интеграции, разработке программного обеспечения, искусственном интеллекте и инфраструктурных решениях.',
+    description:
+      'Один из крупнейших российских ИТ-холдингов, специализирующийся на интеграции, разработке программного обеспечения, искусственном интеллекте и инфраструктурных решениях.',
+    tone: 'blue',
   },
   {
     name: 'Банк ПСБ',
     logo: psbLogo,
     case: 'Разработка системы раннего обнаружения кризисов ликвидности.',
-    description: 'Системообразующий российский банк, опорный банк для оборонно-промышленного комплекса России. Лидер в области финтех-инноваций и поддержки госсектора.',
+    description:
+      'Системообразующий российский банк, опорный банк для оборонно-промышленного комплекса России. Лидер в области финтех-инноваций и поддержки госсектора.',
+    tone: 'pink',
   },
   {
-    name: 'Технологии — и точка',
+    name: 'Технологии - и точка',
     logo: vitLogo,
     case: 'Прогнозирование продаж новых продуктов сети.',
-    description: 'Дочерняя ИТ-компания сети ресторанов «Вкусно — и точка». Создана для разработки цифровых решений, автоматизации процессов и поддержки технологической инфраструктуры сети.',
-  }
+    description:
+      'Дочерняя ИТ-компания сети "Вкусно - и точка". Создана для разработки цифровых решений, автоматизации процессов и поддержки технологической инфраструктуры сети.',
+    tone: 'green',
+  },
 ];
 
 const TIMELINE = [
-  { 
+  {
     stage: 'Регистрация',
-    date: '1 апреля', 
-    title: 'Открытие регистрации', 
+    date: '1 апреля',
+    title: 'Открытие регистрации',
     desc: 'Начало приема заявок от студентов.',
-    details: 'Регистрация проходит через официальный сайт. Вам необходимо заполнить анкету и прикрепить портфолио проектов (если есть).'
+    details:
+      'Регистрация проходит через официальный сайт. Вам необходимо заполнить анкету и прикрепить портфолио проектов (если есть).',
   },
-  { 
+  {
     stage: 'Регистрация',
-    date: '20 апреля', 
-    title: 'Закрытие регистрации', 
+    date: '20 апреля',
+    title: 'Закрытие регистрации',
     desc: 'Последний день для подачи заявки.',
-    details: 'После 23:59 по московскому времени прием заявок будет автоматически прекращен. Убедитесь, что все поля заполнены корректно.'
+    details:
+      'После 23:59 по московскому времени прием заявок будет автоматически прекращен. Убедитесь, что все поля заполнены корректно.',
   },
-  { 
+  {
     stage: 'Отбор',
-    date: '21–25 апреля', 
-    title: 'Отбор', 
+    date: '21-25 апреля',
+    title: 'Отбор',
     desc: 'Рассмотрение заявок и собеседования.',
-    details: 'Экспертная комиссия оценивает мотивацию и технический бэкграунд. В некоторых случаях мы приглашаем на короткое онлайн-интервью.'
+    details:
+      'Экспертная комиссия оценивает мотивацию и технический бэкграунд. В некоторых случаях мы приглашаем на короткое онлайн-интервью.',
   },
-  { 
+  {
     stage: 'Отбор',
-    date: '26 апреля', 
-    title: 'Финальные списки', 
+    date: '26 апреля',
+    title: 'Финальные списки',
     desc: 'Объявление участников.',
-    details: 'Списки публикуются на сайте и в Telegram-канале школы. Все участники получат подтверждение на электронную почту.'
+    details:
+      'Списки публикуются на сайте и в Telegram-канале школы. Все участники получат подтверждение на электронную почту.',
   },
-  { 
+  {
     stage: 'Школа',
-    date: '8 мая', 
-    title: 'День заезда', 
+    date: '8 мая',
+    title: 'День заезда',
     desc: 'Открытие, презентация кейсов.',
-    details: 'Трансфер из Москвы в УОК «Лесное озеро», расселение, приветственный обед и официальная церемония открытия с участием партнеров.'
+    details:
+      'Трансфер из Москвы в УОК "Лесное озеро", расселение, приветственный обед и официальная церемония открытия с участием партнеров.',
   },
-  { 
+  {
     stage: 'Школа',
-    date: '9–11 мая', 
-    title: 'Проектная работа', 
+    date: '9-11 мая',
+    title: 'Проектная работа',
     desc: 'Мастер-классы, чек-поинты.',
-    details: 'Интенсивная работа в командах. Каждый день — консультации с менторами и образовательные лекции от экспертов индустрии.'
+    details:
+      'Интенсивная работа в командах. Каждый день - консультации с менторами и образовательные лекции от экспертов индустрии.',
   },
-  { 
+  {
     stage: 'Школа',
-    date: '12 мая', 
-    title: 'Финал', 
+    date: '12 мая',
+    title: 'Финал',
     desc: 'Защиты проектов и награждение.',
-    details: 'Презентация решений перед жюри. Награждение победителей ценными призами и сертификатами.'
+    details:
+      'Презентация решений перед жюри. Награждение победителей ценными призами и сертификатами.',
   },
-  { 
+  {
     stage: 'Школа',
-    date: '13 мая', 
-    title: 'Отъезд', 
+    date: '13 мая',
+    title: 'Отъезд',
     desc: 'Завершение школы.',
-    details: 'Завтрак, прощание с командой и организованный трансфер до Москвы.'
+    details: 'Завтрак, прощание с командой и организованный трансфер до Москвы.',
+  },
+];
+
+const TIMELINE_GROUPS = [
+  {
+    stage: 'Регистрация',
+    tone: 'bg-blue-500 text-white',
+    items: TIMELINE.filter((item) => item.stage === 'Регистрация'),
+  },
+  {
+    stage: 'Отбор',
+    tone: 'bg-pink-500 text-white',
+    items: TIMELINE.filter((item) => item.stage === 'Отбор'),
+  },
+  {
+    stage: 'Школа',
+    tone: 'bg-yellow-300 text-slate-950',
+    items: TIMELINE.filter((item) => item.stage === 'Школа'),
   },
 ];
 
@@ -157,105 +180,120 @@ const EXPERTS = [
 ];
 
 const FAQ = [
-  { 
-    q: 'Требуется ли предварительная подготовка для участия?', 
-    a: 'Предварительная подготовка не является обязательной. Для участия необходимо заполнить регистрационную форму. В отдельных случаях может проводиться дополнительное собеседование для оценки навыков и уровня подготовки участника.' 
+  {
+    q: 'Требуется ли предварительная подготовка для участия?',
+    a: 'Предварительная подготовка не является обязательной. Для участия необходимо заполнить регистрационную форму. В отдельных случаях может проводиться дополнительное собеседование для оценки навыков и уровня подготовки участника.',
   },
-  { 
-    q: 'Кто может участвовать в Школе?', 
-    a: 'Участником может стать студент МАИ или Финуниверситета, который на момент проведения Школы достиг 18 лет и имеет базовые знания в области ИТ или ИИ. Мы приветствуем студентов всех курсов и факультетов, заинтересованных в развитии своих навыков и участии в проектной работе.' 
+  {
+    q: 'Кто может участвовать в Школе?',
+    a: 'Участником может стать студент МАИ или Финуниверситета, который на момент проведения Школы достиг 18 лет и имеет базовые знания в области ИТ или ИИ. Мы приветствуем студентов всех курсов и факультетов, заинтересованных в развитии своих навыков и участии в проектной работе.',
   },
-  { q: 'Что с проживанием и питанием?', a: 'Проживание и питание полностью обеспечиваются организаторами на территории УОК «Лесное озеро».' },
+  { q: 'Что с проживанием и питанием?', a: 'Проживание и питание полностью обеспечиваются организаторами на территории УОК "Лесное озеро".' },
   { q: 'Участие платное?', a: 'Участие в Школе бесплатное для прошедших отбор студентов.' },
 ];
 
 const SKILLS = [
-  'Python', 
-  'Анализ данных (Data Science)', 
-  'Машинное обучение (ML)', 
+  'Python',
+  'Анализ данных (Data Science)',
+  'Машинное обучение (ML)',
   'Нейронные сети (DL)',
-  'Веб-разработка', 
+  'Веб-разработка',
   'Мобильная разработка',
   'SQL и базы данных',
-  'UI/UX Дизайн', 
+  'UI/UX Дизайн',
   'Продуктовая аналитика',
-  'Управление проектами', 
+  'Управление проектами',
   'Публичные выступления',
-  'Лидерство'
+  'Лидерство',
 ];
-const MAI_FACULTIES = ['Институт №1 «Авиационная техника»', 'Институт №2 «Авиационные, ракетные двигатели и энергетические установки»', 'Институт №3 «Системы управления, информатика и электроэнергетика»', 'Институт №4 «Радиоэлектроника, инфокоммуникации и информационная безопасность»', 'Институт №8 «Информационные технологии и прикладная математика»'];
 
-// --- Components ---
+const MAI_FACULTIES = [
+  'Институт №1 "Авиационная техника"',
+  'Институт №2 "Авиационные, ракетные двигатели и энергетические установки"',
+  'Институт №3 "Системы управления, информатика и электроэнергетика"',
+  'Институт №4 "Радиоэлектроника, инфокоммуникации и информационная безопасность"',
+  'Институт №8 "Информационные технологии и прикладная математика"',
+];
 
-const SectionTitle = ({ children, subtitle }: { children: React.ReactNode, subtitle?: string }) => (
-  <div className="mb-12 md:mb-20">
-    <motion.h2 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="text-4xl md:text-6xl font-serif italic mb-4"
-    >
-      {children}
-    </motion.h2>
-    {subtitle && (
-      <motion.p 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.1 }}
-        className="text-muted-foreground text-lg max-w-2xl"
-      >
-        {subtitle}
-      </motion.p>
-    )}
-  </div>
-);
+const STATS = [
+  { value: '300+', label: 'Студентов прошли через Школу', color: 'bg-blue-500 text-white' },
+  { value: '70+', label: 'Опытных кураторов и экспертов', color: 'bg-pink-500 text-white' },
+  { value: '15+', label: 'Компаний поддержали нас', color: 'bg-green-500 text-slate-950' },
+  { value: '5 лет', label: 'История проведения Школы', color: 'bg-yellow-300 text-slate-950' },
+];
 
-const Countdown = () => {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
+const featureTiles = [
+  { icon: Calendar, title: '5 дней', text: 'Интенсивная программа с проектной работой.', tone: 'bg-blue-500 text-white' },
+  { icon: Briefcase, title: 'Кейсы', text: 'Реальные задачи от компаний-партнеров.', tone: 'bg-pink-500 text-white' },
+  { icon: Users, title: 'Команды', text: 'Участники из МАИ и Финуниверситета.', tone: 'bg-yellow-300 text-slate-950' },
+  { icon: Award, title: 'Финал', text: 'Защита проектов перед жюри.', tone: 'bg-green-500 text-slate-950' },
+];
 
-  useEffect(() => {
-    const target = new Date('2026-05-08T09:00:00');
-    const interval = setInterval(() => {
-      const now = new Date();
-      const diff = target.getTime() - now.getTime();
-      if (diff <= 0) {
-        clearInterval(interval);
-        return;
-      }
-      setTimeLeft({
-        "дней": Math.floor(diff / (1000 * 60 * 60 * 24)),
-        "часов": Math.floor((diff / (1000 * 60 * 60)) % 24),
-        "минут": Math.floor((diff / 1000 / 60) % 60),
-        "секунд": Math.floor((diff / 1000) % 60),
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, []);
+const sectionClass = 'rounded-[32px] border border-slate-200 bg-white p-6 md:p-8';
+const fieldClass =
+  'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-colors duration-200 placeholder:text-slate-400 focus:border-primary';
 
+function SectionTitle({
+  label,
+  title,
+  subtitle,
+}: {
+  label: string;
+  title: string;
+  subtitle?: string;
+}) {
   return (
-    <div className="flex gap-4 md:gap-8 font-mono text-sm md:text-base">
-      {Object.entries(timeLeft).map(([label, value]) => (
-        <div key={label} className="flex flex-col items-center">
-          <span className="text-2xl md:text-4xl font-bold">{value.toString().padStart(2, '0')}</span>
-          <span className="text-[10px] uppercase tracking-widest opacity-50">{label}</span>
-        </div>
-      ))}
+    <div className="mb-10 md:mb-14">
+      <motion.p
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.45 }}
+        className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500"
+      >
+        {label}
+      </motion.p>
+      <motion.h2
+        initial={{ opacity: 0, y: 12 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.5 }}
+        className="max-w-3xl text-4xl font-semibold leading-[0.95] tracking-[-0.06em] md:text-6xl"
+      >
+        {title}
+      </motion.h2>
+      {subtitle ? (
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.5, delay: 0.04 }}
+          className="mt-5 max-w-2xl text-lg leading-relaxed text-slate-600"
+        >
+          {subtitle}
+        </motion.p>
+      ) : null}
     </div>
   );
-};
+}
 
 function LandingPage() {
   const { scrollYProgress } = useScroll();
-  const heroRef = useRef(null);
-  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [activeFaq, setActiveFaq] = useState<number | null>(0);
 
-  const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm<RegistrationForm>({
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+    setValue,
+  } = useForm<RegistrationForm>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
+      university: 'МАИ',
       skills: [],
       consent: false,
-    }
+    },
   });
 
   const selectedUniversity = watch('university');
@@ -268,621 +306,631 @@ function LandingPage() {
 
   const toggleSkill = (skill: string) => {
     const current = selectedSkills || [];
-    if (current.includes(skill)) {
-      setValue('skills', current.filter(s => s !== skill));
-    } else {
-      setValue('skills', [...current, skill]);
-    }
+    setValue(
+      'skills',
+      current.includes(skill) ? current.filter((item) => item !== skill) : [...current, skill],
+      { shouldValidate: true },
+    );
   };
 
   return (
-    <div className="min-h-screen selection:bg-primary selection:text-white">      
-      <motion.div 
-        className="fixed top-0 left-0 right-0 h-1 bg-primary z-[60] origin-left"
+    <div className="relative min-h-screen overflow-x-hidden">
+      <motion.div
+        className="fixed inset-x-0 top-0 z-[70] h-1 origin-left bg-primary"
         style={{ scaleX: scrollYProgress }}
       />
 
-      <section ref={heroRef} className="relative h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
-  <HeroBackground />
+      <section className="hero-screen relative flex items-center overflow-hidden border-b border-slate-200 bg-white">
+        <HeroBackground />
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 py-16 md:px-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+          >
+            <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.88] tracking-[-0.08em] sm:text-6xl md:text-7xl lg:text-[6.3rem]">
+              Весенняя школа
+              <span className="block text-primary">ИТ и ИИ</span>
+              <span className="block">2026</span>
+            </h1>
+            <p className="mt-7 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
+              Проектно-образовательный интенсив, объединяющий хакатон, форум и нетворкинг для лучших студентов.
+            </p>
 
-  <motion.div 
-    initial={{ opacity: 0, y: 30 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="text-center max-w-5xl relative z-10"
-  >
-    <div className="flex flex-wrap justify-center gap-4 mb-8">
-      <span className="px-4 py-1 rounded-full border border-border text-xs font-mono uppercase tracking-widest">
-        8–13 мая 2026
-      </span>
-      <span className="px-4 py-1 rounded-full border border-border text-xs font-mono uppercase tracking-widest">
-        УОК «Лесное озеро»
-      </span>
-    </div>
-
-    <div className="relative min-h-[240px] md:min-h-[320px] mb-8">
-      <motion.div
-        initial={{ opacity: 1, y: 0 }}
-        animate={{ 
-          opacity: [1, 1, 0],
-          y: [0, 0, -20],
-          scale: [1, 1, 0.95]
-        }}
-        transition={{ 
-          duration: 2,
-          times: [0, 0.6, 1],
-          ease: "easeInOut"
-        }}
-        className="absolute inset-0 flex flex-col items-center justify-center"
-      >
-        <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
-          Школа <br />
-          <span className="sans-serif font-bold">
-            ИТ и математического моделирования
-          </span>
-        </h1>
-      </motion.div>
-
-      <motion.div
-        initial={{ scaleX: 0, originX: 1 }}
-        animate={{ scaleX: [0, 1, 1, 0] }}
-        transition={{ 
-          duration: 2.5,
-          times: [0, 0.4, 0.6, 1],
-          delay: 1.2,
-          ease: "easeInOut"
-        }}
-        className="absolute inset-0 bg-gradient-to-r from-background via-background to-transparent z-10"
-        style={{ transformOrigin: "right" }}
-      />
-
-      <motion.div
-        initial={{ scaleX: 0, originX: 0 }}
-        animate={{ scaleX: [0, 1, 1, 0] }}
-        transition={{ 
-          duration: 2.5,
-          times: [0, 0.4, 0.6, 1],
-          delay: 2.2,
-          ease: "easeInOut"
-        }}
-        className="absolute inset-0 bg-gradient-to-l from-background via-background to-transparent z-10"
-        style={{ transformOrigin: "left" }}
-      />
-
-      {/* Эффект молнии/вспышки */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ 
-          opacity: [0, 1, 0],
-          scale: [0.8, 2.5, 2]
-        }}
-        transition={{ duration: 1, delay: 2.8 }}
-        className="absolute inset-0 bg-primary/30 blur-2xl rounded-full z-5"
-      />
-
-      <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, delay: 3.2, ease: "easeOut" }}
-        className="flex flex-col items-center justify-center relative"
-      >
-        <motion.span
-          initial={{ opacity: 0, scale: 0.5, rotate: -45 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 0.5, delay: 3.8, ease: "easeOut" }}
-          className="mb-3 md:absolute md:-top-8 md:-right-5 px-2.5 py-1 md:px-3 md:py-1.5 bg-gradient-to-r from-primary to-primary/80 text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-full border border-primary/50 whitespace-nowrap"
-        >
-          New
-        </motion.span>
-        <div className="relative inline-block mb-4">
-          <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9]">
-            Весенняя школа
-          </h1>
-        </div>
-        <h1 className="text-5xl md:text-8xl font-bold tracking-tighter leading-[0.9] text-center">
-          <span className="font-serif italic font-normal text-primary">
-            ИТ и Искусственный интеллект
-          </span>
-        </h1>
-      </motion.div>
-    </div>
-
-    <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-12">
-      Проектно-образовательный интенсив, объединяющий хакатон, форум и нетворкинг для лучших студентов.
-    </p>
-
-    <div className="flex flex-col md:flex-row items-center justify-center gap-8 mb-16">
-      <motion.button 
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        onClick={() => document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' })}
-        className="px-10 py-4 bg-primary text-white rounded-full font-semibold text-lg shadow-xl shadow-primary/20 cursor-pointer"
-      >
-        Подать заявку
-      </motion.button>
-      <Countdown />
-    </div>
-  </motion.div>
-
-  <motion.div 
-    animate={{ y: [0, 10, 0] }}
-    transition={{ repeat: Infinity, duration: 2 }}
-    className="absolute bottom-10 left-1/2 -translate-x-1/2 text-muted-foreground"
-  >
-    <ChevronDown className="w-6 h-6" />
-  </motion.div>
-</section>
-
-      {/* Organizers */}
-      <section className="py-20">
-        <div className="container mx-auto px-6">
-          <p className="text-center text-[16px] uppercase tracking-widest text-muted-foreground mb-20">Организаторы</p>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-20 md:gap-40">
-            <div className="text-center">
-              <img 
-                src={maiLogo} 
-                alt="МАИ" 
-                className="h-10 md:h-14" 
-              />
-            </div>
-            <div className="text-center">
-              <img 
-                src={faLogo} 
-                alt="Финансовый университет" 
-                className="h-20 md:h-24" 
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-40 container mx-auto px-6">
-        <SectionTitle subtitle="Школа ИТ и ИИ — это проектно-образовательный выездной интенсив, объединяющий хакатон, образовательный форум и нетворкинг. В течение нескольких дней студенты работают в командах над задачами от компаний-партнёров.">
-          О мероприятии
-        </SectionTitle>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="mb-32"
-        >
-          <div className="relative max-w-4xl mx-auto rounded-2xl overflow-hidden shadow-2xl group">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 pointer-events-none" />
-            <div className="relative aspect-video">
-              <iframe 
-                src="https://rutube.ru/play/embed/acfcaeba80cb8c68313820078cc8a743"
-                className="absolute inset-0 w-full h-full border-none"
-                allow="clipboard-write; autoplay"
-                allowFullScreen
-                title="Event video"
-              />
-            </div>
-          </div>
-          <h3 className="text-2xl font-bold text-center m-8">Как это было в 2025</h3>
-        </motion.div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {[
-            { val: '300+', label: 'Студентов прошли через Школу' },
-            { val: '70+', label: 'Опытных кураторов и экспертов' },
-            { val: '15+', label: 'Компаний поддержали нас' },
-            { val: '5 лет', label: 'История проведения Школы' },
-          ].map((stat, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="p-8 rounded-3xl bg-muted border border-border"
-            >
-              <div className="text-4xl font-bold mb-2 text-primary">{stat.val}</div>
-              <div className="text-sm text-muted-foreground font-medium">{stat.label}</div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      <section className="py-24 md:py-40 bg-muted/50">
-        <div className="container mx-auto px-6">
-          <SectionTitle subtitle="Компании, которые поддерживают Школу и предоставляют экспертную поддержку.">
-            Наши партнеры
-          </SectionTitle>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {PARTNERS.map((partner, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="p-8 rounded-3xl bg-background border border-border hover:shadow-xl transition-all"
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+              <button
+                onClick={() => document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' })}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-white"
               >
-                <div className="h-20 mb-8 flex items-center">
-                  <img src={partner.logo} alt={partner.name} className="max-h-full max-w-[160px] object-contain" />
-                </div>
-                <h4 className="text-xl font-bold mb-4">{partner.name}</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-8">
-                  {partner.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="mt-20 p-8 rounded-3xl border border-dashed border-border flex flex-col md:flex-row items-center gap-12">
-            <div className="flex-1">
-              <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-2">Технологический партнер</p>
-              <h4 className="text-2xl font-bold mb-4">Yandex Cloud</h4>
-              <p className="text-muted-foreground text-sm">Один из лидеров российского рынка облачных технологий. Предоставляет инфраструктурные сервисы, инструменты для разработки, работы с данными и ИИ.</p>
+                Подать заявку
+                <ChevronRight className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
+                className="inline-flex items-center justify-center rounded-full border border-slate-300 px-8 py-4 text-base font-semibold"
+              >
+                О мероприятии
+              </button>
             </div>
-            <img src={yandexCloudLogo} alt="Yandex Cloud" className="max-h-full max-w-[160px]  object-contain" />
-          </div>
-        </div>
-      </section>
+          </motion.div>
 
-      <section className="py-24 md:py-40 container mx-auto px-6">
-        <SectionTitle subtitle="Реальные задачи от лидеров рынка. Финальные формулировки будут известны участникам только на открытии Школы.">
-          Кейсы Школы
-        </SectionTitle>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16 md:gap-24">
-          {PARTNERS.map((partner, i) => (
-            <motion.div 
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="group"
-            >
-              {/* <div className="h-16 mb-8 flex items-center">
-                <img 
-                  src={partner.logo} 
-                  alt={partner.name} 
-                  className="max-h-full max-w-[160px] object-contain" 
-                />
-              </div> */}
-              <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-muted-foreground mb-4 group-hover:text-primary transition-colors">
-                {partner.name}
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.08 }}
+            className="grid gap-4"
+          >
+            <div className="rounded-[32px] bg-blue-500 p-6 text-white">
+              <p className="text-[11px] uppercase tracking-[0.28em] text-white/70">
+                Даты проведения
               </p>
-              <h4 className="text-3xl md:text-4xl font-serif italic leading-[1.1] group-hover:text-primary transition-colors">
-                {partner.case}
-              </h4>
-            </motion.div>
-          ))}
+              <h2 className="mt-3 text-5xl font-semibold tracking-[-0.08em]">
+                8-13 мая
+              </h2>
+              <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/78">
+                Выездная школа пройдет в течение шести дней с проектной работой,
+                лекциями, мастер-классами и финальной защитой.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {featureTiles.map(({ icon: Icon, title, text, tone }) => (
+                <div key={title} className={cn('rounded-[28px] p-5', tone)}>
+                  <Icon className="h-6 w-6" />
+                  <h3 className="mt-5 text-2xl font-semibold tracking-[-0.05em]">{title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed opacity-85">{text}</p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      <section className="py-24 md:py-40 bg-background overflow-hidden">
-        <div className="container mx-auto px-6">
-          <SectionTitle subtitle="Путь участника от регистрации до финала. Интерактивный план мероприятий.">
-            Таймлайн Школы
-          </SectionTitle>
-          
-          <div className="relative max-w-5xl mx-auto">
-            <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-[1px] bg-border md:-translate-x-1/2" />
-            
-            <div className="space-y-12 md:space-y-24 relative">
-              {TIMELINE.map((item, i) => (
-                <motion.div 
-                  key={i}
-                  initial={{ opacity: 0, y: 30 }}
+      <main className="pb-12">
+        <section className="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-8">
+          <div className="grid gap-4 md:grid-cols-[0.85fr_1.15fr]">
+            <div className="rounded-[32px] p-8 text-black">
+              <p className="text-[11px] uppercase tracking-[0.28em] text-black/75">Организаторы</p>
+              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.06em] md:text-4xl">
+                МАИ и Финансовый университет
+              </h2>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className={cn(sectionClass, 'flex min-h-[170px] items-center justify-center')}>
+                <img src={maiLogo} alt="МАИ" className="max-h-14 w-auto" />
+              </div>
+              <div className={cn(sectionClass, 'flex min-h-[170px] items-center justify-center')}>
+                <img src={faLogo} alt="Финансовый университет" className="max-h-24 w-auto" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="about" className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <SectionTitle
+            label="О школе"
+            title="Выездной интенсив, в котором важны и идеи, и темп работы"
+            subtitle="Школа ИТ и ИИ - это проектно-образовательный выездной интенсив, объединяющий хакатон, образовательный форум и нетворкинг. В течение нескольких дней студенты работают в командах над задачами от компаний-партнеров."
+          />
+
+          <div className="grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.5 }}
+              className="rounded-[32px] border border-slate-200 bg-white p-4"
+            >
+              <div className="aspect-video overflow-hidden rounded-[26px]">
+                <iframe
+                  src="https://rutube.ru/play/embed/acfcaeba80cb8c68313820078cc8a743"
+                  className="h-full w-full border-none"
+                  allow="clipboard-write; autoplay"
+                  allowFullScreen
+                  title="Event video"
+                />
+              </div>
+              <div className="mt-4 flex items-center justify-between gap-4 px-2 text-slate-950">
+                <div>
+                  <p className="text-sm text-slate-500">Как это было в 2025</p>
+                  <h3 className="text-xl font-semibold tracking-[-0.04em]">Весенняя школа ИТ и ИИ</h3>
+                </div>
+                <div className="rounded-full bg-yellow-300 px-4 py-2 text-sm font-semibold text-slate-950">Видео</div>
+              </div>
+            </motion.div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {STATS.map((stat) => (
+                <motion.div
+                  key={stat.label}
+                  initial={{ opacity: 0, y: 14 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  className={cn(
-                    "relative flex flex-col md:flex-row items-start md:items-center gap-8 md:gap-0",
-                    i % 2 === 0 ? "md:flex-row-reverse" : ""
-                  )}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.5 }}
+                  className={cn('rounded-[32px] p-6 md:p-7', stat.color)}
                 >
-                  <div className="hidden md:flex flex-1 justify-center">
-                    <div className={cn(
-                      "flex flex-col",
-                      i % 2 === 0 ? "items-start pl-12" : "items-end pr-12"
-                    )}>
-                      <span className="text-4xl font-mono font-bold text-primary/30 group-hover:text-primary transition-colors">
-                        {item.date.split(' ')[0]}
-                      </span>
-                      <span className="text-xs uppercase tracking-[0.3em] font-bold opacity-50">
-                        {item.date.split(' ')[1]}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="absolute left-4 md:left-1/2 w-8 h-8 -translate-x-1/2 z-10 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]" />
-                    <div className="absolute inset-0 rounded-full border border-primary/20 scale-150" />
-                  </div>
-
-                  <div className="flex-1 w-full pl-12 md:pl-0">
-                    <motion.div 
-                      whileHover={{ scale: 1.02 }}
-                      className={cn(
-                        "p-6 md:p-8 rounded-3xl bg-muted/50 border border-border hover:border-primary/50 transition-all group cursor-default",
-                        i % 2 === 0 ? "md:mr-12" : "md:ml-12"
-                      )}
-                    >
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="px-2 py-0.5 rounded-md bg-primary/10 text-[10px] font-bold uppercase tracking-widest text-primary">
-                          {item.stage}
-                        </span>
-                        <span className="md:hidden text-xs font-mono font-bold opacity-50">
-                          {item.date}
-                        </span>
-                      </div>
-                      <h4 className="text-xl md:text-2xl font-bold mb-3 group-hover:text-primary transition-colors">
-                        {item.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                        {item.desc}
-                      </p>
-                      <div className="pt-4 border-t border-border/50">
-                        <p className="text-xs text-muted-foreground/80 leading-relaxed italic">
-                          {item.details}
-                        </p>
-                      </div>
-                    </motion.div>
-                  </div>
+                  <p className="text-5xl font-semibold tracking-[-0.08em]">{stat.value}</p>
+                  <p className="mt-3 text-sm leading-relaxed opacity-85">{stat.label}</p>
                 </motion.div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="py-24 md:py-40 bg-muted/30">
-        <div className="container mx-auto px-6">
-          <SectionTitle subtitle="Наставники и эксперты, которые помогут вам в работе над проектами.">
-            Эксперты
-          </SectionTitle>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-12">
-            {EXPERTS.map((expert, i) => (
-              <motion.div 
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
+        <section id="partners" className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <SectionTitle
+            label="Партнеры"
+            title="Компании, которые помогают школе содержанием и задачами"
+            subtitle="Компании, которые поддерживают Школу и предоставляют экспертную поддержку."
+          />
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {PARTNERS.map((partner) => (
+              <motion.div
+                key={partner.name}
+                initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="group flex flex-col items-center text-center"
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.5 }}
+                className={cn(
+                  'rounded-[32px] p-7',
+                  partner.tone === 'blue'
+                    ? 'bg-blue-500 text-white'
+                    : partner.tone === 'pink'
+                      ? 'bg-pink-500 text-white'
+                      : 'bg-green-500 text-slate-950',
+                )}
               >
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden mb-4 bg-muted border border-border flex items-center justify-center grayscale group-hover:grayscale-0 transition-all duration-500 shadow-sm group-hover:shadow-md">
-                  {expert.img ? (
-                    <img src={expert.img} alt={expert.name} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  ) : (
-                    <User className="w-12 h-12 text-muted-foreground/40" />
-                  )}
+                <div className="flex min-h-20 items-center">
+                  <img
+                    src={partner.logo}
+                    alt={partner.name}
+                    className={cn(
+                      'max-h-12 max-w-[160px] object-contain',
+                      partner.tone === 'green' ? '' : 'brightness-0 invert',
+                    )}
+                  />
                 </div>
-                <div className="space-y-1">
-                  <h4 className="text-base font-bold leading-tight group-hover:text-primary transition-colors">{expert.name}</h4>
-                  <p className="text-[11px] text-primary font-semibold uppercase tracking-wider">{expert.role}</p>
-                  <p className="text-[10px] text-muted-foreground uppercase font-mono">{expert.company}</p>
+                <h3 className="mt-6 text-2xl font-semibold tracking-[-0.05em]">{partner.name}</h3>
+                <p className="mt-4 text-sm leading-relaxed opacity-90">{partner.description}</p>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.5 }}
+            className="mt-4 rounded-[32px] border border-slate-200 bg-white p-8 text-slate-950"
+          >
+            <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
+              <div className="max-w-2xl">
+                <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Технологический партнер</p>
+                <h3 className="mt-4 text-3xl font-semibold tracking-[-0.06em]">Yandex Cloud</h3>
+                <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                  Один из лидеров российского рынка облачных технологий. Предоставляет инфраструктурные сервисы, инструменты для разработки, работы с данными и ИИ.
+                </p>
+              </div>
+              <div className="rounded-[26px] border border-slate-200 bg-slate-50 p-6">
+                <img src={yandexCloudLogo} alt="Yandex Cloud" className="max-h-14 w-auto object-contain" />
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <SectionTitle
+            label="Кейсы"
+            title="Реальные задачи от лидеров рынка"
+            subtitle="Финальные формулировки будут известны участникам только на открытии Школы."
+          />
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {PARTNERS.map((partner, index) => (
+              <motion.div
+                key={partner.name}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.5 }}
+                className={cn(
+                  sectionClass,
+                  index === 0
+                    ? 'border-l-[10px] border-l-blue-500'
+                    : index === 1
+                      ? 'border-l-[10px] border-l-pink-500'
+                      : 'border-l-[10px] border-l-green-500',
+                )}
+              >
+                <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">{partner.name}</p>
+                <h3 className="mt-6 text-3xl font-semibold leading-[1.02] tracking-[-0.05em]">{partner.case}</h3>
+                <div className="mt-10 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                  Задача партнера
+                  <ChevronRight className="h-4 w-4" />
                 </div>
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section id="register" className="py-24 md:py-40 container mx-auto px-6">
-        <div className="max-w-4xl mx-auto p-8 md:p-16 rounded-[40px] bg-background border border-border shadow-2xl">
-          <SectionTitle subtitle="Заполни анкету, чтобы стать частью весенней школы. Мы ищем мотивированных студентов, готовых к интенсивной работе.">
-            Регистрация
-          </SectionTitle>
+        <section id="timeline" className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <SectionTitle
+            label="Таймлайн"
+            title="Путь участника от регистрации до финала"
+            subtitle="Программа разбита на этапы: регистрация, отбор и выездная школа."
+          />
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider opacity-50">Фамилия</label>
-                <input {...register('lastName')} className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
-                {errors.lastName && <p className="text-red-500 text-xs">{errors.lastName.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider opacity-50">Имя</label>
-                <input {...register('firstName')} className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
-                {errors.firstName && <p className="text-red-500 text-xs">{errors.firstName.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider opacity-50">Отчество</label>
-                <input {...register('middleName')} className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider opacity-50">Email</label>
-                <input type="email" {...register('email')} placeholder="example@mail.ru" className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
-                {errors.email && <p className="text-red-500 text-xs">{errors.email.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider opacity-50">Телефон</label>
-                <input 
-                  type="tel" 
-                  {...register('phone')} 
-                  placeholder="+7 (999) 999-99-99" 
-                  onChange={(e) => {
-                    let value = e.target.value.replace(/\D/g, '');
-                    if (value.startsWith('7')) value = value.slice(1);
-                    if (value.length > 10) value = value.slice(0, 10);
-                    
-                    let formatted = '+7';
-                    if (value.length > 0) formatted += ' (' + value.slice(0, 3);
-                    if (value.length > 3) formatted += ') ' + value.slice(3, 6);
-                    if (value.length > 6) formatted += '-' + value.slice(6, 8);
-                    if (value.length > 8) formatted += '-' + value.slice(8, 10);
-                    
-                    setValue('phone', formatted);
-                  }}
-                  className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" 
-                />
-                {errors.phone && <p className="text-red-500 text-xs">{errors.phone.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider opacity-50">Telegram</label>
-                <input {...register('telegram')} placeholder="@username" className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
-                {errors.telegram && <p className="text-red-500 text-xs">{errors.telegram.message}</p>}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider opacity-50">Дата рождения</label>
-                <input type="date" {...register('birthDate')} className="w-full p-4 text-base rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all appearance-none [-webkit-appearance:none]" />
-                {errors.birthDate && <p className="text-red-500 text-xs">{errors.birthDate.message}</p>}
-              </div>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider opacity-50">ВУЗ</label>
-                <select {...register('university')} className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[position:right_1rem_center] bg-[size:1.5em_1.5em] bg-no-repeat">
-                  <option value="МАИ" className="bg-background">МАИ</option>
-                  <option value="Финуниверситет" className="bg-background">Финансовый университет</option>
-                </select>
-              </div>
-            </div>
-
-            <AnimatePresence mode="wait">
-              {selectedUniversity === 'МАИ' ? (
-                <motion.div 
-                  key="mai"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-6"
-                >
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider opacity-50">Институт / Факультет</label>
-                    <select {...register('maiFaculty')} className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20viewBox%3D%220%200%2020%2020%22%3E%3Cpath%20stroke%3D%22%236b7280%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%20stroke-width%3D%221.5%22%20d%3D%22m6%208%204%204%204-4%22%2F%3E%3C%2Fsvg%3E')] bg-[position:right_1rem_center] bg-[size:1.5em_1.5em] bg-no-repeat">
-                      {MAI_FACULTIES.map(f => <option key={f} value={f} className="bg-background">{f}</option>)}
-                    </select>
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-wider opacity-50">Учебная группа</label>
-                    <input {...register('maiGroup')} placeholder="М8О-101Б-22" className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
-                  </div>
-                </motion.div>
-              ) : (
-                <motion.div 
-                  key="fin"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-2"
-                >
-                  <label className="text-xs font-bold uppercase tracking-wider opacity-50">Учебная группа</label>
-                  <input {...register('finGroup')} className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all" />
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div className="space-y-4">
-              <label className="text-xs font-bold uppercase tracking-wider opacity-50">Ваши навыки</label>
-              <div className="flex flex-wrap gap-2">
-                {SKILLS.map(skill => (
-                  <button
-                    key={skill}
-                    type="button"
-                    onClick={() => toggleSkill(skill)}
-                    className={cn(
-                      "px-4 py-2 rounded-full text-sm border transition-all cursor-pointer",
-                      selectedSkills?.includes(skill) 
-                        ? "bg-primary text-white border-primary" 
-                        : "bg-muted border-border hover:border-primary"
-                    )}
-                  >
-                    {skill}
-                  </button>
-                ))}
-              </div>
-              {errors.skills && <p className="text-red-500 text-xs">{errors.skills.message}</p>}
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider opacity-50">Почему именно тебя необходимо взять?</label>
-              <textarea 
-                {...register('motivation')} 
-                rows={5}
-                className="w-full p-4 rounded-xl bg-muted border border-border focus:border-primary outline-none transition-all resize-none"
-                placeholder="Расскажите о своем опыте, проектах и ожиданиях от школы..."
-              />
-              {errors.motivation && <p className="text-red-500 text-xs">{errors.motivation.message}</p>}
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <input 
-                  type="checkbox" 
-                  {...register('consent')} 
-                  className="mt-1 w-5 h-5 rounded border-border text-primary focus:ring-primary cursor-pointer" 
-                />
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Я даю согласие на обработку моих персональных данных в соответствии с <Link to="/privacy" className="text-primary hover:underline">Политикой конфиденциальности</Link> и соглашаюсь с <Link to="/rules" className="text-primary hover:underline">Положением о проведении состязания</Link>.
-                </p>
-              </div>
-              {errors.consent && <p className="text-red-500 text-xs">{errors.consent.message}</p>}
-            </div>
-
-            <motion.button 
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="submit"
-              className="w-full py-6 bg-primary text-white rounded-2xl font-bold text-xl shadow-xl shadow-primary/20 cursor-pointer"
-            >
-              Отправить заявку
-            </motion.button>
-          </form>
-        </div>
-      </section>
-
-      <section className="py-24 md:py-40 bg-muted/30">
-        <div className="container mx-auto px-6 max-w-4xl">
-          <SectionTitle>Частые вопросы</SectionTitle>
-          <div className="space-y-4">
-            {FAQ.map((item, i) => (
-              <div 
-                key={i}
-                className="rounded-2xl bg-background border border-border overflow-hidden"
+          <div className="grid gap-5 lg:grid-cols-3">
+            {TIMELINE_GROUPS.map((group) => (
+              <motion.div
+                key={group.stage}
+                initial={{ opacity: 0, y: 14 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.5 }}
+                className="overflow-hidden rounded-[32px] border border-slate-200 bg-white"
               >
-                <button 
-                  onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                  className="w-full p-6 flex items-center justify-between text-left cursor-pointer"
+                <div className={cn('px-6 py-5 md:px-7', group.tone)}>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.28em] opacity-80">
+                    Этап
+                  </p>
+                  <h3 className="mt-3 text-3xl font-semibold tracking-[-0.06em]">
+                    {group.stage}
+                  </h3>
+                </div>
+
+                <div className="space-y-4 p-6 md:p-7">
+                  {group.items.map((item) => (
+                    <div key={`${item.title}-${item.date}`} className="border-l-4 border-slate-900 pl-4">
+                      <p className="text-sm font-semibold text-slate-500">{item.date}</p>
+                      <h4 className="mt-2 text-xl font-semibold tracking-[-0.04em]">{item.title}</h4>
+                      <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                      <p className="mt-3 text-sm leading-relaxed text-slate-500">{item.details}</p>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <SectionTitle
+            label="Эксперты"
+            title="Эксперты, с которыми вы будете работать во время школы"
+            subtitle="Эксперты школы сопровождают участников в проектной работе."
+          />
+
+          <div className="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 0.45 }}
+              className="rounded-[32px] border border-slate-200 bg-white p-8"
+            >
+              <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Экспертный трек</p>
+              <h3 className="mt-4 text-4xl font-semibold leading-[0.95] tracking-[-0.06em] text-slate-950">
+                Люди, которые помогают командам дойти до финала
+              </h3>
+              <p className="mt-5 text-sm leading-relaxed text-slate-600">
+                В течение всей школы участники работают рядом с людьми из data science, ML, продуктовой разработки, архитектуры и UX.
+              </p>
+              <div className="mt-10 grid gap-3 sm:grid-cols-2">
+                <div className="rounded-[24px] bg-slate-50 px-4 py-4">
+                  <p className="text-3xl font-semibold tracking-[-0.06em] text-slate-950">10+</p>
+                  <p className="mt-1 text-sm text-slate-500">экспертов</p>
+                </div>
+                <div className="rounded-[24px] bg-slate-50 px-4 py-4">
+                  <p className="text-3xl font-semibold tracking-[-0.06em] text-slate-950">3</p>
+                  <p className="mt-1 text-sm text-slate-500">ключевых направления</p>
+                </div>
+              </div>
+            </motion.div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              {EXPERTS.map((expert, index) => (
+                <motion.article
+                  key={expert.name}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.45 }}
+                  className={cn(
+                    'rounded-[32px] border border-slate-200 bg-white p-6',
+                    index % 5 === 0 ? 'md:col-span-2' : '',
+                  )}
                 >
-                  <span className="font-bold">{item.q}</span>
-                  {activeFaq === i ? <Minus className="w-5 h-5 text-primary" /> : <Plus className="w-5 h-5" />}
+                  <div className={cn('flex gap-5', index % 5 === 0 ? 'flex-col sm:flex-row sm:items-center' : 'items-start')}>
+                    <div className={cn(
+                      'flex shrink-0 items-center justify-center overflow-hidden rounded-[24px] border border-slate-200 bg-slate-50',
+                      index % 5 === 0 ? 'h-24 w-24' : 'h-18 w-18',
+                    )}>
+                      {expert.img ? (
+                        <img
+                          src={expert.img}
+                          alt={expert.name}
+                          className="h-full w-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <User className="h-8 w-8 text-slate-400" />
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className={cn('flex flex-col gap-3', index % 5 === 0 ? 'sm:flex-row sm:items-start sm:justify-between' : '')}>
+                        <div>
+                          <h3 className="text-2xl font-semibold tracking-[-0.04em] text-slate-950">
+                            {expert.name}
+                          </h3>
+                          <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
+                            {expert.role}
+                          </p>
+                        </div>
+                        <div className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-500">
+                          {expert.company}
+                        </div>
+                      </div>
+
+                      <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600">
+                        Эксперт сопровождает команды в работе над проектами, помогает с проверкой гипотез, выбором решений и подготовкой к финальной защите.
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="register" className="mx-auto max-w-5xl px-4 py-16 md:px-8 md:py-24">
+          <div className="rounded-[32px] border border-slate-200 bg-white p-6 md:p-10 lg:p-14">
+            <SectionTitle
+              label="Регистрация"
+              title="Заполни анкету и стань частью весенней школы"
+              subtitle="Заполни анкету, чтобы стать частью весенней школы. Мы ищем мотивированных студентов, готовых к интенсивной работе."
+            />
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+              <div className="grid gap-5 md:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Фамилия</label>
+                  <input {...register('lastName')} className={fieldClass} />
+                  {errors.lastName ? <p className="text-xs text-red-400">{errors.lastName.message}</p> : null}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Имя</label>
+                  <input {...register('firstName')} className={fieldClass} />
+                  {errors.firstName ? <p className="text-xs text-red-400">{errors.firstName.message}</p> : null}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Отчество</label>
+                  <input {...register('middleName')} className={fieldClass} />
+                </div>
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-3">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Email</label>
+                  <input type="email" {...register('email')} placeholder="example@mail.ru" className={fieldClass} />
+                  {errors.email ? <p className="text-xs text-red-400">{errors.email.message}</p> : null}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Телефон</label>
+                  <input
+                    type="tel"
+                    {...register('phone')}
+                    placeholder="+7 (999) 999-99-99"
+                    onChange={(e) => {
+                      let value = e.target.value.replace(/\D/g, '');
+                      if (value.startsWith('7')) value = value.slice(1);
+                      if (value.length > 10) value = value.slice(0, 10);
+
+                      let formatted = '+7';
+                      if (value.length > 0) formatted += ` (${value.slice(0, 3)}`;
+                      if (value.length > 3) formatted += `) ${value.slice(3, 6)}`;
+                      if (value.length > 6) formatted += `-${value.slice(6, 8)}`;
+                      if (value.length > 8) formatted += `-${value.slice(8, 10)}`;
+
+                      setValue('phone', formatted, { shouldValidate: true });
+                    }}
+                    className={fieldClass}
+                  />
+                  {errors.phone ? <p className="text-xs text-red-400">{errors.phone.message}</p> : null}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Telegram</label>
+                  <input {...register('telegram')} placeholder="@username" className={fieldClass} />
+                  {errors.telegram ? <p className="text-xs text-red-400">{errors.telegram.message}</p> : null}
+                </div>
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Дата рождения</label>
+                  <input type="date" {...register('birthDate')} className={fieldClass} />
+                  {errors.birthDate ? <p className="text-xs text-red-400">{errors.birthDate.message}</p> : null}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">ВУЗ</label>
+                  <select {...register('university')} className={fieldClass}>
+                    <option value="МАИ">МАИ</option>
+                    <option value="Финуниверситет">Финансовый университет</option>
+                  </select>
+                </div>
+              </div>
+
+              <AnimatePresence mode="wait">
+                {selectedUniversity === 'МАИ' ? (
+                  <motion.div
+                    key="mai"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="grid gap-5 md:grid-cols-2"
+                  >
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Институт / Факультет</label>
+                      <select {...register('maiFaculty')} className={fieldClass}>
+                        {MAI_FACULTIES.map((faculty) => (
+                          <option key={faculty} value={faculty}>
+                            {faculty}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Учебная группа</label>
+                      <input {...register('maiGroup')} placeholder="М8О-101Б-22" className={fieldClass} />
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="fin"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="space-y-2"
+                  >
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Учебная группа</label>
+                    <input {...register('finGroup')} className={fieldClass} />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <div className="space-y-4">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Ваши навыки</label>
+                <div className="flex flex-wrap gap-3">
+                  {SKILLS.map((skill, index) => (
+                    <button
+                      key={skill}
+                      type="button"
+                      onClick={() => toggleSkill(skill)}
+                      className={cn(
+                        'rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-150',
+                        selectedSkills?.includes(skill)
+                          ? index % 4 === 0
+                            ? 'border-blue-500 bg-blue-500 text-white'
+                            : index % 4 === 1
+                              ? 'border-pink-500 bg-pink-500 text-white'
+                              : index % 4 === 2
+                                ? 'border-green-500 bg-green-500 text-slate-950'
+                                : 'border-yellow-300 bg-yellow-300 text-slate-950'
+                          : 'border-slate-200 bg-slate-50 text-slate-700',
+                      )}
+                    >
+                      {skill}
+                    </button>
+                  ))}
+                </div>
+                {errors.skills ? <p className="text-xs text-red-400">{errors.skills.message}</p> : null}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Почему именно тебя необходимо взять?</label>
+                <textarea
+                  {...register('motivation')}
+                  rows={5}
+                  className={cn(fieldClass, 'resize-none')}
+                  placeholder="Расскажите о своем опыте, проектах и ожиданиях от школы..."
+                />
+                {errors.motivation ? <p className="text-xs text-red-400">{errors.motivation.message}</p> : null}
+              </div>
+
+              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                <label className="flex items-start gap-4">
+                  <input type="checkbox" {...register('consent')} className="mt-1 h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary" />
+                  <span className="text-sm leading-relaxed text-slate-600">
+                    Я даю согласие на обработку моих персональных данных в соответствии с{' '}
+                    <Link to="/privacy" className="text-blue-400 hover:underline">
+                      Политикой конфиденциальности
+                    </Link>{' '}
+                    и соглашаюсь с{' '}
+                    <Link to="/rules" className="text-blue-400 hover:underline">
+                      Положением о проведении состязания
+                    </Link>
+                    .
+                  </span>
+                </label>
+                {errors.consent ? <p className="mt-3 text-xs text-red-400">{errors.consent.message}</p> : null}
+              </div>
+
+              <button type="submit" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-5 text-lg font-semibold text-slate-950">
+                Отправить заявку
+                <ChevronRight className="h-5 w-5" />
+              </button>
+            </form>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-4xl px-4 py-16 md:px-8 md:py-24">
+          <SectionTitle label="FAQ" title="Частые вопросы" />
+          <div className="space-y-4">
+            {FAQ.map((item, index) => (
+              <motion.div
+                key={item.q}
+                initial={{ opacity: 0, y: 12 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.45 }}
+                className={sectionClass}
+              >
+                <button
+                  onClick={() => setActiveFaq(activeFaq === index ? null : index)}
+                  className="flex w-full items-center justify-between gap-4 text-left"
+                >
+                  <span className="text-lg font-semibold tracking-[-0.03em]">{item.q}</span>
+                  {activeFaq === index ? <Minus className="h-5 w-5 text-primary" /> : <Plus className="h-5 w-5 text-slate-500" />}
                 </button>
-                <AnimatePresence>
-                  {activeFaq === i && (
-                    <motion.div 
+                <AnimatePresence initial={false}>
+                  {activeFaq === index ? (
+                    <motion.div
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="px-6 pb-6 text-muted-foreground text-sm leading-relaxed"
+                      transition={{ duration: 0.25 }}
+                      className="overflow-hidden pt-4 text-sm leading-relaxed text-slate-600"
                     >
                       {item.a}
                     </motion.div>
-                  )}
+                  ) : null}
                 </AnimatePresence>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      <footer className="py-20 border-t border-border">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-20">
-            <div className="max-w-xs">
-              <h2 className="text-2xl font-bold mb-4 leading-tight">Весенняя школа <br />ИТ и ИИ 2026</h2>
-              <p className="text-sm text-muted-foreground">Проектно-образовательный интенсив для будущих лидеров ИТ-индустрии</p>
+      <footer className="border-t border-slate-200 bg-white px-4 py-10 text-slate-950 md:px-8 md:py-14">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-xl">
+              <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Весенняя школа 2026</p>
+              <h2 className="mt-4 text-4xl font-semibold leading-[0.95] tracking-[-0.06em]">
+                Весенняя школа
+                <br />
+                ИТ и ИИ 2026
+              </h2>
+              <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                Проектно-образовательный интенсив для будущих лидеров ИТ-индустрии
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 text-sm text-slate-600">
+              <Link to="/privacy" className="hover:text-slate-950">Политика конфиденциальности</Link>
+              <Link to="/rules" className="hover:text-slate-950">Положение о состязании</Link>
             </div>
           </div>
-          <div className="pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] uppercase tracking-widest text-muted-foreground">
-            <p>© 2026 Весенняя школа ИТ и ИИ <br/>Возрастное ограничение: 18+<br/></p>
-            <div className="flex gap-8">
-              <Link to="/privacy" className="hover:text-primary transition-colors">Политика конфиденциальности</Link>
-              <Link to="/rules" className="hover:text-primary transition-colors">Положение о состязании</Link>
-            </div>
+
+          <div className="mt-10 border-t border-slate-200 pt-6 text-xs leading-relaxed text-slate-500">
+            <p>© 2026 Весенняя школа ИТ и ИИ. Возрастное ограничение: 18+.</p>
+            <p className="mt-3 max-w-5xl">
+              Школа проводится с целью развития кадрового потенциала в области информационных технологий, искусственного интеллекта и математического моделирования, привлечения студентов и аспирантов к научно-проектной деятельности, а также организации долгосрочных поездок студентов, обучающихся по образовательным программам топ-уровня, для участия в обучении, исследовательских проектах и программах с компаниями-партнерами в рамках исполнения обязательств МАИ и Финуниверситета по договорам с АНО "Аналитический центр при Правительстве Российской Федерации".
+            </p>
           </div>
-          <div className="pt-8 text-center text-[10px] uppercase tracking-widest text-muted-foreground max-w-[1000px] mx-auto">
-          <p>Школа проводится с целью развития кадрового потенциала в области информационных технологий, искусственного интеллекта и математического моделирования, привлечения студентов и аспирантов к научно-проектной деятельности, а также организации долгосрочных поездок студентов, обучающихся по образовательным программам топ-уровня, для участия в обучении, исследовательских проектах и  программах с компаниями-партнерами в рамках исполнения обязательств МАИ и Финуниверситета по договорам с АНО "Аналитический центр при Правительстве Российской Федерации"</p>
-        </div>
         </div>
       </footer>
     </div>
