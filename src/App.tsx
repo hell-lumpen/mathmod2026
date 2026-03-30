@@ -458,8 +458,7 @@ function LandingPage() {
               </div>
               <div className="mt-4 flex items-center justify-between gap-4 px-2 text-slate-950">
                 <div>
-                  <p className="text-sm text-slate-500">Как это было в 2025</p>
-                  <h3 className="text-xl font-semibold tracking-[-0.04em]">Весенняя школа ИТ и ИИ</h3>
+                  <h3 className="text-xl font-semibold tracking-[-0.04em]">Как это было в 2025</h3>
                 </div>
                 <div className="rounded-full bg-yellow-300 px-4 py-2 text-sm font-semibold text-slate-950">Видео</div>
               </div>
