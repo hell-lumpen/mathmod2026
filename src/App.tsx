@@ -226,10 +226,8 @@ const STATS = [
 ];
 
 const featureTiles = [
-  { icon: Calendar, title: '5 дней', text: 'Интенсивная программа с проектной работой.', tone: 'bg-blue-500 text-white' },
-  { icon: Briefcase, title: 'Кейсы', text: 'Реальные задачи от компаний-партнеров.', tone: 'bg-pink-500 text-white' },
-  { icon: Users, title: 'Команды', text: 'Участники из МАИ и Финуниверситета.', tone: 'bg-yellow-300 text-slate-950' },
-  { icon: Award, title: 'Финал', text: 'Защита проектов перед жюри.', tone: 'bg-green-500 text-slate-950' },
+  { icon: Calendar, title: 'Лекции, командная работа и защита решений в одном ритме.', tone: 'bg-blue-500 text-white' },
+  { icon: Briefcase, title: 'Кейсы от компаний-партнеров и работа над реальными сценариями.', tone: 'bg-pink-500 text-white' },
 ];
 
 const AUDIENCE = [
