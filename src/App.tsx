@@ -33,6 +33,9 @@ import vitLogo from './static/vkusnoitochka.png';
 import t1Logo from './static/T1_Logo.png';
 import yandexCloudLogo from './static/yc_logo.png';
 
+import ermolin from './static/Ermolin.png';
+
+
 const registrationSchema = z.object({
   lastName: z.string().min(2, 'Минимум 2 символа'),
   firstName: z.string().min(2, 'Минимум 2 символа'),
@@ -167,15 +170,15 @@ const TIMELINE_GROUPS = [
 ];
 
 const EXPERTS = [
-  { name: 'Александр Волков', role: 'Lead Data Scientist', company: 'Технологии будущего', img: 'https://picsum.photos/seed/expert1/300/300' },
-  { name: 'Екатерина Морозова', role: 'AI Research Director', company: 'Цифровые решения', img: 'https://picsum.photos/seed/expert2/300/300' },
-  { name: 'Дмитрий Лебедев', role: 'Senior ML Engineer', company: 'Инновационные системы', img: 'https://picsum.photos/seed/expert3/300/300' },
-  { name: 'Анна Григорьева', role: 'Product Manager', company: 'Технологии развития', img: 'https://picsum.photos/seed/expert4/300/300' },
+  { name: 'Александр Волков', role: 'Lead Data Scientist', company: 'Технологии будущего', img: ermolin },
+  { name: 'Екатерина Морозова', role: 'AI Research Director', company: 'Цифровые решения', img: ermolin },
+  { name: 'Дмитрий Лебедев', role: 'Senior ML Engineer', company: 'Инновационные системы', img: '' },
+  { name: 'Анна Григорьева', role: 'Product Manager', company: 'Технологии развития', img: '' },
   { name: 'Максим Соколов', role: 'Data Architect', company: 'Аналитические платформы', img: '' },
   { name: 'Ольга Новикова', role: 'UX Research Lead', company: 'Дизайн решений', img: '' },
-  { name: 'Игорь Васильев', role: 'CTO', company: 'Технологии связи', img: 'https://picsum.photos/seed/expert7/300/300' },
+  { name: 'Игорь Васильев', role: 'CTO', company: 'Технологии связи', img: '' },
   { name: 'Татьяна Кузнецова', role: 'AI Ethics Specialist', company: 'Центр искусственного интеллекта', img: '' },
-  { name: 'Андрей Павлов', role: 'Backend Architect', company: 'Облачные технологии', img: 'https://picsum.photos/seed/expert9/300/300' },
+  { name: 'Андрей Павлов', role: 'Backend Architect', company: 'Облачные технологии', img: '' },
   { name: 'Мария Степанова', role: 'MLOps Engineer', company: 'Автоматизация процессов', img: '' },
 ];
 
@@ -194,7 +197,7 @@ const FAQ = [
 
 const SKILLS = [
   'Python',
-  'Анализ данных (Data Science)',
+  'Анализ данных',
   'Машинное обучение (ML)',
   'Нейронные сети (DL)',
   'Веб-разработка',
@@ -229,9 +232,25 @@ const featureTiles = [
   { icon: Award, title: 'Финал', text: 'Защита проектов перед жюри.', tone: 'bg-green-500 text-slate-950' },
 ];
 
+const AUDIENCE = [
+  {
+    title: 'Студентам ИТ и технических направлений',
+    text: 'Тем, кто уже работает с кодом, данными, аналитикой, ML или интересуется инженерными задачами.',
+  },
+  {
+    title: 'Тем, кто хочет попасть в проектную среду',
+    text: 'Если вам важна работа в команде, реальные кейсы и практика, а не только лекционный формат.',
+  },
+  {
+    title: 'Тем, кто готов к интенсивному ритму',
+    text: 'Школа рассчитана на участников, которым интересно быстро разбираться в задаче и доводить решение до защиты.',
+  },
+];
+
 const sectionClass = 'rounded-[32px] border border-slate-200 bg-white p-6 md:p-8';
 const fieldClass =
   'w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-[15px] text-slate-900 outline-none transition-colors duration-200 placeholder:text-slate-400 focus:border-primary';
+const sectionShellClass = 'mx-auto max-w-7xl rounded-[36px] border border-slate-200 bg-white px-4 py-16 md:px-8 md:py-20';
 
 function SectionTitle({
   label,
@@ -279,7 +298,8 @@ function SectionTitle({
 
 function LandingPage() {
   const { scrollYProgress } = useScroll();
-  const [activeFaq, setActiveFaq] = useState<number | null>(0);
+  const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [activeExpert, setActiveExpert] = useState(0);
 
   const {
     register,
@@ -313,6 +333,12 @@ function LandingPage() {
     );
   };
 
+  const currentExpert = EXPERTS[activeExpert];
+  const prevExpert = () =>
+    setActiveExpert((prev) => (prev - 1 + EXPERTS.length) % EXPERTS.length);
+  const nextExpert = () =>
+    setActiveExpert((prev) => (prev + 1) % EXPERTS.length);
+
   return (
     <div className="relative min-h-screen overflow-x-hidden">
       <motion.div
@@ -328,10 +354,16 @@ function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55 }}
           >
+            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500">
+              Весенняя школа 2026
+            </p>
+            <p className="mt-4 max-w-3xl text-2xl font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950 md:text-3xl">
+              Школа ИТ и искусственного интеллекта
+            </p>
             <h1 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.88] tracking-[-0.08em] sm:text-6xl md:text-7xl lg:text-[6.3rem]">
-              Весенняя школа
-              <span className="block text-primary">ИТ и ИИ</span>
-              <span className="block">2026</span>
+              Школа, в которой
+              <span className="block text-primary">идеи превращаются</span>
+              <span className="block">в проект</span>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
               Проектно-образовательный интенсив, объединяющий хакатон, форум и нетворкинг для лучших студентов.
@@ -360,21 +392,14 @@ function LandingPage() {
             transition={{ duration: 0.55, delay: 0.08 }}
             className="grid gap-4"
           >
-            <div className="rounded-[32px] bg-blue-500 p-6 text-white">
-              <p className="text-[11px] uppercase tracking-[0.28em] text-white/70">
-                Даты проведения
-              </p>
-              <h2 className="mt-3 text-5xl font-semibold tracking-[-0.08em]">
-                8-13 мая
+            <div className="p-6 md:p-8">
+              <h2 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.88] tracking-[-0.08em] sm:text-6xl md:text-7xl lg:text-[6.3rem]">
+                8-13 мая 2026
               </h2>
-              <p className="mt-4 max-w-sm text-sm leading-relaxed text-white/78">
-                Выездная школа пройдет в течение шести дней с проектной работой,
-                лекциями, мастер-классами и финальной защитой.
-              </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
-              {featureTiles.map(({ icon: Icon, title, text, tone }) => (
+              {featureTiles.slice(0, 2).map(({ icon: Icon, title, text, tone }) => (
                 <div key={title} className={cn('rounded-[28px] p-5', tone)}>
                   <Icon className="h-6 w-6" />
                   <h3 className="mt-5 text-2xl font-semibold tracking-[-0.05em]">{title}</h3>
@@ -388,11 +413,12 @@ function LandingPage() {
 
       <main className="pb-12">
         <section className="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-8">
+          <div className={sectionShellClass}>
           <div className="grid gap-4 md:grid-cols-[0.85fr_1.15fr]">
             <div className="rounded-[32px] p-8 text-black">
               <p className="text-[11px] uppercase tracking-[0.28em] text-black/75">Организаторы</p>
               <h2 className="mt-4 text-3xl font-semibold tracking-[-0.06em] md:text-4xl">
-                МАИ и Финансовый университет
+                Два университета, одна школа
               </h2>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -404,9 +430,11 @@ function LandingPage() {
               </div>
             </div>
           </div>
+          </div>
         </section>
 
         <section id="about" className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <div className={sectionShellClass}>
           <SectionTitle
             label="О школе"
             title="Выездной интенсив, в котором важны и идеи, и темп работы"
@@ -455,9 +483,41 @@ function LandingPage() {
               ))}
             </div>
           </div>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <div className={sectionShellClass}>
+            <SectionTitle
+              label="Для кого"
+              title="Для тех, кто хочет не просто слушать, а работать над задачей"
+              subtitle="Школа подойдет тем, кому нужен интенсивный формат, командная работа и реальный проектный опыт."
+            />
+
+            <div className="grid gap-4 md:grid-cols-3">
+              {AUDIENCE.map((item) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 14 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.45 }}
+                  className={sectionClass}
+                >
+                  <h3 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-slate-950">
+                    {item.title}
+                  </h3>
+                  <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                    {item.text}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </section>
 
         <section id="partners" className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <div className={sectionShellClass}>
           <SectionTitle
             label="Партнеры"
             title="Компании, которые помогают школе содержанием и задачами"
@@ -473,12 +533,7 @@ function LandingPage() {
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.5 }}
                 className={cn(
-                  'rounded-[32px] p-7',
-                  partner.tone === 'blue'
-                    ? 'bg-blue-500 text-white'
-                    : partner.tone === 'pink'
-                      ? 'bg-pink-500 text-white'
-                      : 'bg-green-500 text-slate-950',
+                  'rounded-[32px] border border-slate-200 bg-white p-6 md:p-8'
                 )}
               >
                 <div className="flex min-h-20 items-center">
@@ -486,8 +541,7 @@ function LandingPage() {
                     src={partner.logo}
                     alt={partner.name}
                     className={cn(
-                      'max-h-12 max-w-[160px] object-contain',
-                      partner.tone === 'green' ? '' : 'brightness-0 invert',
+                      'max-h-16 max-w-[160px] object-contain'
                     )}
                   />
                 </div>
@@ -512,14 +566,16 @@ function LandingPage() {
                   Один из лидеров российского рынка облачных технологий. Предоставляет инфраструктурные сервисы, инструменты для разработки, работы с данными и ИИ.
                 </p>
               </div>
-              <div className="rounded-[26px] border border-slate-200 bg-slate-50 p-6">
-                <img src={yandexCloudLogo} alt="Yandex Cloud" className="max-h-14 w-auto object-contain" />
+              <div className="p-6">
+                <img src={yandexCloudLogo} alt="Yandex Cloud" className="max-h-6 w-auto object-contain" />
               </div>
             </div>
           </motion.div>
+          </div>
         </section>
 
         <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <div className={sectionShellClass}>
           <SectionTitle
             label="Кейсы"
             title="Реальные задачи от лидеров рынка"
@@ -545,16 +601,14 @@ function LandingPage() {
               >
                 <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">{partner.name}</p>
                 <h3 className="mt-6 text-3xl font-semibold leading-[1.02] tracking-[-0.05em]">{partner.case}</h3>
-                <div className="mt-10 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                  Задача партнера
-                  <ChevronRight className="h-4 w-4" />
-                </div>
               </motion.div>
             ))}
+          </div>
           </div>
         </section>
 
         <section id="timeline" className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <div className={sectionShellClass}>
           <SectionTitle
             label="Таймлайн"
             title="Путь участника от регистрации до финала"
@@ -593,95 +647,104 @@ function LandingPage() {
               </motion.div>
             ))}
           </div>
+          </div>
         </section>
 
         <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+          <div className={sectionShellClass}>
           <SectionTitle
             label="Эксперты"
             title="Эксперты, с которыми вы будете работать во время школы"
             subtitle="Эксперты школы сопровождают участников в проектной работе."
           />
 
-          <div className="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
-            <motion.div
-              initial={{ opacity: 0, y: 14 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 0.45 }}
-              className="rounded-[32px] border border-slate-200 bg-white p-8"
-            >
-              <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Экспертный трек</p>
-              <h3 className="mt-4 text-4xl font-semibold leading-[0.95] tracking-[-0.06em] text-slate-950">
-                Люди, которые помогают командам дойти до финала
-              </h3>
-              <p className="mt-5 text-sm leading-relaxed text-slate-600">
-                В течение всей школы участники работают рядом с людьми из data science, ML, продуктовой разработки, архитектуры и UX.
-              </p>
-              <div className="mt-10 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-[24px] bg-slate-50 px-4 py-4">
-                  <p className="text-3xl font-semibold tracking-[-0.06em] text-slate-950">10+</p>
-                  <p className="mt-1 text-sm text-slate-500">экспертов</p>
-                </div>
-                <div className="rounded-[24px] bg-slate-50 px-4 py-4">
-                  <p className="text-3xl font-semibold tracking-[-0.06em] text-slate-950">3</p>
-                  <p className="mt-1 text-sm text-slate-500">ключевых направления</p>
-                </div>
-              </div>
-            </motion.div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              {EXPERTS.map((expert, index) => (
-                <motion.article
-                  key={expert.name}
-                  initial={{ opacity: 0, y: 14 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-80px' }}
-                  transition={{ duration: 0.45 }}
-                  className={cn(
-                    'rounded-[32px] border border-slate-200 bg-white p-6',
-                    index % 5 === 0 ? 'md:col-span-2' : '',
+          <div className="rounded-[32px] border border-slate-200 bg-white p-4 md:p-6">
+            <AnimatePresence mode="wait">
+              <motion.article
+                key={currentExpert.name}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.3 }}
+                className="grid gap-6 rounded-[28px] p-5 md:grid-cols-[240px_1fr] md:p-6"
+              >
+                <div className="flex items-center justify-center overflow-hidden rounded-[24px] border border-slate-200 bg-white aspect-[4/5]">
+                  {currentExpert.img ? (
+                    <img
+                      src={currentExpert.img}
+                      alt={currentExpert.name}
+                      className="h-full w-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <User className="h-16 w-16 text-slate-300" />
                   )}
-                >
-                  <div className={cn('flex gap-5', index % 5 === 0 ? 'flex-col sm:flex-row sm:items-center' : 'items-start')}>
-                    <div className={cn(
-                      'flex shrink-0 items-center justify-center overflow-hidden rounded-[24px] border border-slate-200 bg-slate-50',
-                      index % 5 === 0 ? 'h-24 w-24' : 'h-18 w-18',
-                    )}>
-                      {expert.img ? (
-                        <img
-                          src={expert.img}
-                          alt={expert.name}
-                          className="h-full w-full object-cover"
-                          referrerPolicy="no-referrer"
-                        />
-                      ) : (
-                        <User className="h-8 w-8 text-slate-400" />
-                      )}
+                </div>
+
+                <div className="flex flex-col justify-between gap-6">
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-500">
+                      Эксперт школы
+                    </p>
+                    <h3 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-slate-950 md:text-4xl">
+                      {currentExpert.name}
+                    </h3>
+                    <p className="mt-3 text-sm font-semibold uppercase tracking-[0.24em] text-primary">
+                      {currentExpert.role}
+                    </p>
+                    <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
+                      {currentExpert.company}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4 border-slate-200 pt-5">
+                    <div className="text-sm text-slate-500">
+                      {String(activeExpert + 1).padStart(2, '0')} / {String(EXPERTS.length).padStart(2, '0')}
                     </div>
-
-                    <div className="min-w-0 flex-1">
-                      <div className={cn('flex flex-col gap-3', index % 5 === 0 ? 'sm:flex-row sm:items-start sm:justify-between' : '')}>
-                        <div>
-                          <h3 className="text-2xl font-semibold tracking-[-0.04em] text-slate-950">
-                            {expert.name}
-                          </h3>
-                          <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
-                            {expert.role}
-                          </p>
-                        </div>
-                        <div className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-500">
-                          {expert.company}
-                        </div>
-                      </div>
-
-                      <p className="mt-4 max-w-xl text-sm leading-relaxed text-slate-600">
-                        Эксперт сопровождает команды в работе над проектами, помогает с проверкой гипотез, выбором решений и подготовкой к финальной защите.
-                      </p>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={prevExpert}
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700"
+                        aria-label="Предыдущий эксперт"
+                      >
+                        <ChevronRight className="h-5 w-5 rotate-180" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={nextExpert}
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700"
+                        aria-label="Следующий эксперт"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
                     </div>
                   </div>
-                </motion.article>
+                </div>
+              </motion.article>
+            </AnimatePresence>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {EXPERTS.map((expert, index) => (
+                <button
+                  key={expert.name}
+                  type="button"
+                  onClick={() => setActiveExpert(index)}
+                  className={cn(
+                    'rounded-[22px] border px-4 py-4 text-left transition-colors',
+                    activeExpert === index
+                      ? 'border-slate-950 bg-slate-950 text-white'
+                      : 'border-slate-200 bg-white text-slate-950',
+                  )}
+                >
+                  <p className="text-sm font-semibold tracking-[-0.02em]">{expert.name}</p>
+                  <p className={cn('mt-2 text-[11px] uppercase tracking-[0.22em]', activeExpert === index ? 'text-white/70' : 'text-slate-500')}>
+                    {expert.role}
+                  </p>
+                </button>
               ))}
             </div>
+          </div>
           </div>
         </section>
 
