@@ -952,14 +952,16 @@ function LandingPage() {
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
             <div className="max-w-xl">
-              <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">Весенняя школа 2026</p>
               <h2 className="mt-4 text-4xl font-semibold leading-[0.95] tracking-[-0.06em]">
                 Весенняя школа
                 <br />
                 ИТ и ИИ 2026
               </h2>
               <p className="mt-4 text-sm leading-relaxed text-slate-600">
-                Проектно-образовательный интенсив для будущих лидеров ИТ-индустрии
+                Проектно-образовательный интенсив для будущих лидеров ИТ-индустрии.
+              </p>
+              <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                Возрастное ограничение: 18+.
               </p>
             </div>
             <div className="flex flex-col gap-3 text-sm text-slate-600">
