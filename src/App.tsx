@@ -81,11 +81,11 @@ const PARTNERS = [
     tone: 'green',
   },
   {
-    name: 'Технологии - и точка',
-    logo: vitLogo,
-    case: 'Прогнозирование продаж новых продуктов сети.',
+    name: 'Финансовый университет',
+    logo: faLogo,
+    case: 'Построение маршрутов для доставок с помощью БПЛА.',
     description:
-      'Дочерняя ИТ-компания сети "Вкусно - и точка". Создана для разработки цифровых решений, автоматизации процессов и поддержки технологической инфраструктуры сети.',
+      'Ведущий вуз в области экономики, финансов и управления. Обеспечивает качественное образование и исследовательскую деятельность, готовя специалистов разного профиля для финансового сектора и бизнеса.',
     tone: 'green',
   },
 ];
@@ -558,7 +558,7 @@ function LandingPage() {
                 Важно
               </p>
               <p className="mt-3 text-lg font-semibold leading-relaxed tracking-[-0.03em] text-slate-950">
-                На момент начала школы участнику должно исполниться 18 лет.
+                Участник должен быть гражданином Российской Федерации и на момент начала школы ему должно исполниться 18 лет.
               </p>
             </div>
           </div>
@@ -572,25 +572,21 @@ function LandingPage() {
             subtitle="Компании, которые поддерживают Школу и предоставляют экспертную поддержку."
           />
 
-          <div className="grid gap-4 lg:grid-cols-3">
-            {PARTNERS.map((partner) => (
+          <div className="grid gap-4 lg:grid-cols-2">
+            {PARTNERS.map((partner, index) => (
               <motion.div
-                key={partner.name}
+                key={`${partner.name}-${index}`}
                 initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.5 }}
-                className={cn(
-                  'rounded-[32px] border border-slate-200 bg-white p-6 md:p-8'
-                )}
+                className="rounded-[32px] border border-slate-200 bg-white p-6 md:p-8"
               >
                 <div className="flex min-h-20 items-center">
                   <img
                     src={partner.logo}
                     alt={partner.name}
-                    className={cn(
-                      'max-h-16 max-w-[160px] object-contain'
-                    )}
+                    className="max-h-16 max-w-[160px] object-contain"
                   />
                 </div>
                 <h3 className="mt-6 text-2xl font-semibold tracking-[-0.05em]">{partner.name}</h3>
@@ -630,21 +626,23 @@ function LandingPage() {
             subtitle="Финальные формулировки будут известны участникам только на открытии Школы."
           />
 
-          <div className="grid gap-4 lg:grid-cols-3">
+          <div className="grid gap-4 lg:grid-cols-2">
             {PARTNERS.map((partner, index) => (
               <motion.div
-                key={partner.name}
+                key={`${partner.name}-${index}`}
                 initial={{ opacity: 0, y: 14 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.5 }}
                 className={cn(
                   sectionClass,
-                  index === 0
+                  index % 4 === 0
                     ? 'border-l-[10px] border-l-[#0271FF]'
-                    : index === 1
+                    : index % 4 === 1
                       ? 'border-l-[10px] border-l-[#F25292]'
-                      : 'border-l-[10px] border-l-[#00F78B]',
+                      : index % 4 === 2
+                        ? 'border-l-[10px] border-l-[#00F78B]'
+                        : 'border-l-[10px] border-l-[#FDE12D]',
                 )}
               >
                 <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">{partner.name}</p>
