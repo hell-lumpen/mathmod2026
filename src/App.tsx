@@ -40,7 +40,8 @@ const registrationSchema = z.object({
   phone: z.string().regex(/^\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/, 'Формат: +7 (999) 999-99-99'),
   telegram: z.string().min(2, 'Минимум 2 символа').regex(/^@?[\w\d_]{5,32}$/, 'Некорректный никнейм'),
   birthDate: z.string().refine((date) => {
-    const age = (new Date().getTime() - new Date(date).getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+    const eventStartDate = new Date('2026-05-07T00:00:00+03:00').getTime();
+    const age = (eventStartDate - new Date(date).getTime()) / (1000 * 60 * 60 * 24 * 365.25);
     return age >= 18;
   }, 'Вам должно быть 18+ лет'),
   university: z.enum(['МАИ', 'Финуниверситет']),
@@ -48,7 +49,7 @@ const registrationSchema = z.object({
   maiGroup: z.string().optional(),
   finGroup: z.string().optional(),
   skills: z.array(z.string()).min(1, 'Выберите хотя бы один навык'),
-  motivation: z.string().min(50, 'Напишите подробнее (минимум 50 символов)'),
+  motivation: z.string().min(50, 'Напишите подробнее (минимум 50 символов)').max(1000, 'Не так подробно :). Уменьши длину сообщения до 1000 символов'),
   consent: z.boolean().refine((val) => val === true, 'Необходимо согласие на обработку данных'),
 });
 
@@ -70,6 +71,14 @@ const PARTNERS = [
     description:
       'Системообразующий российский банк, опорный банк для оборонно-промышленного комплекса России. Лидер в области финтех-инноваций и поддержки госсектора.',
     tone: 'pink',
+  },
+  {
+    name: 'Технологии - и точка',
+    logo: vitLogo,
+    case: 'Прогнозирование продаж новых продуктов сети.',
+    description:
+      'Дочерняя ИТ-компания сети "Вкусно - и точка". Создана для разработки цифровых решений, автоматизации процессов и поддержки технологической инфраструктуры сети.',
+    tone: 'green',
   },
   {
     name: 'Технологии - и точка',
@@ -151,17 +160,17 @@ const TIMELINE = [
 const TIMELINE_GROUPS = [
   {
     stage: 'Регистрация',
-    tone: 'bg-blue-500 text-white',
+    tone: 'bg-[#0271FF] text-white',
     items: TIMELINE.filter((item) => item.stage === 'Регистрация'),
   },
   {
     stage: 'Отбор',
-    tone: 'bg-pink-500 text-white',
+    tone: 'bg-[#F25292] text-white',
     items: TIMELINE.filter((item) => item.stage === 'Отбор'),
   },
   {
     stage: 'Школа',
-    tone: 'bg-yellow-300 text-slate-950',
+    tone: 'bg-[#FDE12D] text-slate-950',
     items: TIMELINE.filter((item) => item.stage === 'Школа'),
   },
 ];
@@ -216,15 +225,15 @@ const MAI_FACULTIES = [
 ];
 
 const STATS = [
-  { value: '300+', label: 'Студентов прошли через Школу', color: 'bg-blue-500 text-white' },
-  { value: '70+', label: 'Опытных кураторов и экспертов', color: 'bg-pink-500 text-white' },
-  { value: '15+', label: 'Компаний поддержали нас', color: 'bg-green-500 text-slate-950' },
-  { value: '5 лет', label: 'История проведения Школы', color: 'bg-yellow-300 text-slate-950' },
+  { value: '300+', label: 'Студентов прошли через Школу', color: 'bg-[#0271FF] text-white' },
+  { value: '70+', label: 'Опытных кураторов и экспертов', color: 'bg-[#F25292] text-white' },
+  { value: '15+', label: 'Компаний поддержали нас', color: 'bg-[#00F78B] text-slate-950' },
+  { value: '5 лет', label: 'История проведения Школы', color: 'bg-[#FDE12D] text-slate-950' },
 ];
 
 const featureTiles = [
-  { icon: Calendar, title: 'Лекции и командная работа в одном ритме.', tone: 'bg-blue-500 text-white' },
-  { icon: Briefcase, title: 'Реальные задачи от компаний-партнеров', tone: 'bg-pink-500 text-white' },
+  { icon: Calendar, title: 'Лекции и командная работа в одном ритме.', tone: 'bg-[#0271FF] text-white' },
+  { icon: Briefcase, title: 'Реальные задачи от компаний-партнеров', tone: 'bg-[#F25292] text-white' },
 ];
 
 const AUDIENCE = [
@@ -418,9 +427,18 @@ function LandingPage() {
               <h2 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.88] tracking-[-0.08em] sm:text-6xl md:text-7xl lg:text-[6.3rem]">
                 8-13 мая 2026
               </h2>
-              <p className="mt-5 text-lg font-semibold leading-relaxed tracking-[-0.03em]">
-                Учебно-оздоровительный комплекс «Лесное озеро», Московская область
-              </p>
+              <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-2 text-lg font-semibold leading-relaxed tracking-[-0.03em]">
+                <p>Учебно-оздоровительный комплекс «Лесное озеро», Московская область</p>
+                <a
+                  href="https://yandex.com/maps/-/CPbZEDyz"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1 text-sm font-semibold tracking-normal text-[#0271FF] hover:underline"
+                >
+                  <MapPin className="h-4 w-4" />
+                  На карте
+                </a>
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -440,22 +458,18 @@ function LandingPage() {
       <main className="pb-12">
         <section className="mx-auto max-w-7xl px-4 py-6 md:px-8 md:py-8">
           <div className={sectionShellClass}>
-          <div className="grid gap-4 md:grid-cols-[0.85fr_1.15fr]">
-            <div className="rounded-[32px] p-8 text-black">
-              <p className="text-[11px] uppercase tracking-[0.28em] text-black/75">Организаторы</p>
-              <h2 className="mt-4 text-3xl font-semibold tracking-[-0.06em] md:text-4xl">
-                Два университета, одна школа
-              </h2>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className={cn(sectionClass, 'flex min-h-[170px] items-center justify-center')}>
+            <SectionTitle
+              label=""
+              title="Организаторы"
+            />
+            <div className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-2">
+              <div className={cn(sectionClass, 'flex min-h-[170px] items-center justify-center md:min-h-[190px]')}>
                 <img src={maiLogo} alt="МАИ" className="max-h-14 w-auto" />
               </div>
-              <div className={cn(sectionClass, 'flex min-h-[170px] items-center justify-center')}>
+              <div className={cn(sectionClass, 'flex min-h-[170px] items-center justify-center md:min-h-[190px]')}>
                 <img src={faLogo} alt="Финансовый университет" className="max-h-24 w-auto" />
               </div>
             </div>
-          </div>
           </div>
         </section>
 
@@ -488,7 +502,7 @@ function LandingPage() {
                 <div>
                   <h3 className="text-xl font-semibold tracking-[-0.04em]">Как это было в 2025</h3>
                 </div>
-                <div className="rounded-full bg-yellow-300 px-4 py-2 text-sm font-semibold text-slate-950">Видео</div>
+                <div className="rounded-full bg-[#FDE12D] px-4 py-2 text-sm font-semibold text-slate-950">Видео</div>
               </div>
             </motion.div>
 
@@ -537,6 +551,15 @@ function LandingPage() {
                   </p>
                 </motion.div>
               ))}
+            </div>
+
+            <div className="mt-4 rounded-[32px] border border-slate-200 bg-white p-6 md:p-7">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-500">
+                Важно
+              </p>
+              <p className="mt-3 text-lg font-semibold leading-relaxed tracking-[-0.03em] text-slate-950">
+                На момент начала школы участнику должно исполниться 18 лет.
+              </p>
             </div>
           </div>
         </section>
@@ -618,10 +641,10 @@ function LandingPage() {
                 className={cn(
                   sectionClass,
                   index === 0
-                    ? 'border-l-[10px] border-l-blue-500'
+                    ? 'border-l-[10px] border-l-[#0271FF]'
                     : index === 1
-                      ? 'border-l-[10px] border-l-pink-500'
-                      : 'border-l-[10px] border-l-green-500',
+                      ? 'border-l-[10px] border-l-[#F25292]'
+                      : 'border-l-[10px] border-l-[#00F78B]',
                 )}
               >
                 <p className="text-[11px] uppercase tracking-[0.28em] text-slate-500">{partner.name}</p>
@@ -852,12 +875,12 @@ function LandingPage() {
                         'rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-150',
                         selectedSkills?.includes(skill)
                           ? index % 4 === 0
-                            ? 'border-blue-500 bg-blue-500 text-white'
+                            ? 'border-[#0271FF] bg-[#0271FF] text-white'
                             : index % 4 === 1
-                              ? 'border-pink-500 bg-pink-500 text-white'
+                              ? 'border-[#F25292] bg-[#F25292] text-white'
                               : index % 4 === 2
-                                ? 'border-green-500 bg-green-500 text-slate-950'
-                                : 'border-yellow-300 bg-yellow-300 text-slate-950'
+                                ? 'border-[#00F78B] bg-[#00F78B] text-slate-950'
+                                : 'border-[#FDE12D] bg-[#FDE12D] text-slate-950'
                           : 'border-slate-200 bg-slate-50 text-slate-700',
                       )}
                     >
@@ -884,11 +907,11 @@ function LandingPage() {
                   <input type="checkbox" {...register('consent')} className="mt-1 h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary" />
                   <span className="text-sm leading-relaxed text-slate-600">
                     Я подтверждаю, что являюсь гражданином Российской Федерации и даю согласие на обработку моих персональных данных в соответствии с{' '}
-                    <Link to="/privacy" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">
+                    <Link to="/privacy" target="_blank" rel="noreferrer" className="text-[#0271FF] hover:underline">
                       Политикой конфиденциальности
                     </Link>{' '}
                     и соглашаюсь с{' '}
-                    <Link to="/rules" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">
+                    <Link to="/rules" target="_blank" rel="noreferrer" className="text-[#0271FF] hover:underline">
                       Положением о проведении состязания
                     </Link>
                     .
