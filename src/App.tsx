@@ -32,13 +32,15 @@ import vitLogo from './static/vkusnoitochka.png';
 import t1Logo from './static/T1_Logo.png';
 import yandexCloudLogo from './static/yc_logo.png';
 
+const TELEGRAM_CHAT_URL = 'https://t.me/school_it_ii_2026';
+
 const registrationSchema = z.object({
   lastName: z.string().min(2, 'Минимум 2 символа'),
   firstName: z.string().min(2, 'Минимум 2 символа'),
   middleName: z.string().optional(),
   email: z.string().email('Некорректный email'),
   phone: z.string().regex(/^\+7\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/, 'Формат: +7 (999) 999-99-99'),
-  telegram: z.string().min(2, 'Минимум 2 символа').regex(/^@?[\w\d_]{5,32}$/, 'Некорректный никнейм'),
+  telegram: z.string().min(2, 'Минимум 2 символа').regex(/^@?[\w\d_]{2,32}$/, 'Некорректный никнейм'),
   birthDate: z.string().refine((date) => {
     const eventStartDate = new Date('2026-05-07T00:00:00+03:00').getTime();
     const age = (eventStartDate - new Date(date).getTime()) / (1000 * 60 * 60 * 24 * 365.25);
@@ -221,7 +223,15 @@ const MAI_FACULTIES = [
   'Институт №2 "Авиационные, ракетные двигатели и энергетические установки"',
   'Институт №3 "Системы управления, информатика и электроэнергетика"',
   'Институт №4 "Радиоэлектроника, инфокоммуникации и информационная безопасность"',
-  'Институт №8 "Информационные технологии и прикладная математика"',
+  'Институт №5 "Экономика и менеджмент высокотехнологичной индустрии"',
+ 'Институт №6 "Аэрокосмический"', 
+'Институт №7 "Робототехнические и интеллектуальные системы"', 
+  'Институт №8 "Компьютерные науки и прикладная математика"',
+'Институт №9 "Общеинженерная подготовка"', 
+'Институт №10 "Иностранные языки"', 
+'Институт №11 "Новые материалы и производственные технологии"', 
+'Институт №12 "Аэрокосмические наукоёмкие технологии и производства"', 
+'Институт №14 "Передовая инженерная школа"'
 ];
 
 const STATS = [
@@ -272,6 +282,14 @@ function getInitials(name: string) {
     .toUpperCase();
 }
 
+function TelegramIcon({ className = 'h-4 w-4' }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M21.944 4.661a1.5 1.5 0 0 0-1.675-.248L3.78 11.85a1.5 1.5 0 0 0 .149 2.764l4.215 1.484 1.617 4.983a1.5 1.5 0 0 0 2.63.472l2.308-2.998 4.528 3.291a1.5 1.5 0 0 0 2.357-.901l2.413-14.64a1.5 1.5 0 0 0-.053-.644ZM9.66 15.02l8.683-6.032-6.712 7.604-.745 2.9-.9-2.775-.326-1.005Z" />
+    </svg>
+  );
+}
+
 function SectionTitle({
   label,
   title,
@@ -320,6 +338,7 @@ function LandingPage() {
   const { scrollYProgress } = useScroll();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [activeHeroPhrase, setActiveHeroPhrase] = useState(0);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const {
     register,
     handleSubmit,
@@ -346,9 +365,19 @@ function LandingPage() {
     return () => window.clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    if (!isSubmitted) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById('register')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [isSubmitted]);
+
   const onSubmit = (data: RegistrationForm) => {
     console.log('Form submitted:', data);
-    alert('Заявка успешно отправлена!');
+    setIsSubmitted(true);
   };
 
   const toggleSkill = (skill: string) => {
@@ -400,7 +429,7 @@ function LandingPage() {
               Проектно-образовательный интенсив, объединяющий хакатон, форум и нетворкинг для лучших студентов.
             </p> */}
 
-            <div className="mt-10 flex flex-col gap-4 sm:flex-row">
+            <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
               <button
                 onClick={() => document.getElementById('register')?.scrollIntoView({ behavior: 'smooth' })}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-white"
@@ -414,6 +443,15 @@ function LandingPage() {
               >
                 О мероприятии
               </button>
+              <a
+                href={TELEGRAM_CHAT_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-300 px-8 py-4 text-base font-semibold text-slate-950"
+              >
+                <TelegramIcon className="h-5 w-5" />
+                Telegram-чат
+              </a>
             </div>
           </motion.div>
 
@@ -525,7 +563,7 @@ function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-16">
           <div className={sectionShellClass}>
             <SectionTitle
               label="Для кого"
@@ -618,7 +656,7 @@ function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-16">
           <div className={sectionShellClass}>
           <SectionTitle
             label="Кейсы"
@@ -656,7 +694,7 @@ function LandingPage() {
         <section id="timeline" className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
           <div className={sectionShellClass}>
           <SectionTitle
-            label="Таймлайн"
+            label=""
             title="Путь участника от регистрации до финала"
             subtitle="Программа разбита на этапы: регистрация, отбор и выездная школа."
           />
@@ -693,7 +731,7 @@ function LandingPage() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-24">
+        <section className="mx-auto max-w-7xl px-4 py-16 md:px-8 md:py-16">
           <div className={sectionShellClass}>
           <SectionTitle
             label=""
@@ -745,184 +783,226 @@ function LandingPage() {
         </section>
 
         <section id="register" className="mx-auto max-w-5xl px-4 py-16 md:px-8 md:py-24">
-          <div className="rounded-[32px] border border-slate-200 bg-white p-6 md:p-10 lg:p-14">
-            <SectionTitle
-              label="Регистрация"
-              title="Заполни анкету и стань частью весенней школы"
-              subtitle="Заполни анкету, чтобы стать частью весенней школы. Мы ищем мотивированных студентов, готовых к интенсивной работе."
-            />
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid gap-5 md:grid-cols-3">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Фамилия</label>
-                  <input {...register('lastName')} className={fieldClass} />
-                  {errors.lastName ? <p className="text-xs text-red-400">{errors.lastName.message}</p> : null}
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Имя</label>
-                  <input {...register('firstName')} className={fieldClass} />
-                  {errors.firstName ? <p className="text-xs text-red-400">{errors.firstName.message}</p> : null}
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Отчество</label>
-                  <input {...register('middleName')} className={fieldClass} />
-                </div>
-              </div>
-
-              <div className="grid gap-5 md:grid-cols-3">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Email</label>
-                  <input type="email" {...register('email')} placeholder="example@mail.ru" className={fieldClass} />
-                  {errors.email ? <p className="text-xs text-red-400">{errors.email.message}</p> : null}
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Телефон</label>
-                  <input
-                    type="tel"
-                    {...register('phone')}
-                    placeholder="+7 (999) 999-99-99"
-                    onChange={(e) => {
-                      let value = e.target.value.replace(/\D/g, '');
-                      if (value.startsWith('7')) value = value.slice(1);
-                      if (value.length > 10) value = value.slice(0, 10);
-
-                      let formatted = '+7';
-                      if (value.length > 0) formatted += ` (${value.slice(0, 3)}`;
-                      if (value.length > 3) formatted += `) ${value.slice(3, 6)}`;
-                      if (value.length > 6) formatted += `-${value.slice(6, 8)}`;
-                      if (value.length > 8) formatted += `-${value.slice(8, 10)}`;
-
-                      setValue('phone', formatted, { shouldValidate: true });
-                    }}
-                    className={fieldClass}
-                  />
-                  {errors.phone ? <p className="text-xs text-red-400">{errors.phone.message}</p> : null}
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Telegram</label>
-                  <input {...register('telegram')} placeholder="@username" className={fieldClass} />
-                  {errors.telegram ? <p className="text-xs text-red-400">{errors.telegram.message}</p> : null}
-                </div>
-              </div>
-
-              <div className="grid gap-5 md:grid-cols-2">
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Дата рождения</label>
-                  <input type="date" {...register('birthDate')} className={fieldClass} />
-                  {errors.birthDate ? <p className="text-xs text-red-400">{errors.birthDate.message}</p> : null}
-                </div>
-                <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">ВУЗ</label>
-                  <select {...register('university')} className={fieldClass}>
-                    <option value="МАИ">МАИ</option>
-                    <option value="Финуниверситет">Финансовый университет</option>
-                  </select>
-                </div>
-              </div>
-
-              <AnimatePresence mode="wait">
-                {selectedUniversity === 'МАИ' ? (
-                  <motion.div
-                    key="mai"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="grid gap-5 md:grid-cols-2"
-                  >
-                    <div className="space-y-2">
-                      <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Институт / Факультет</label>
-                      <select {...register('maiFaculty')} className={fieldClass}>
-                        {MAI_FACULTIES.map((faculty) => (
-                          <option key={faculty} value={faculty}>
-                            {faculty}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Учебная группа</label>
-                      <input {...register('maiGroup')} placeholder="М8О-101Б-22" className={fieldClass} />
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="fin"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="space-y-2"
-                  >
-                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Учебная группа</label>
-                    <input {...register('finGroup')} className={fieldClass} />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <div className="space-y-4">
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Ваши навыки</label>
-                <div className="flex flex-wrap gap-3">
-                  {SKILLS.map((skill, index) => (
-                    <button
-                      key={skill}
-                      type="button"
-                      onClick={() => toggleSkill(skill)}
-                      className={cn(
-                        'rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-150',
-                        selectedSkills?.includes(skill)
-                          ? index % 4 === 0
-                            ? 'border-[#0271FF] bg-[#0271FF] text-white'
-                            : index % 4 === 1
-                              ? 'border-[#F25292] bg-[#F25292] text-white'
-                              : index % 4 === 2
-                                ? 'border-[#00F78B] bg-[#00F78B] text-slate-950'
-                                : 'border-[#FDE12D] bg-[#FDE12D] text-slate-950'
-                          : 'border-slate-200 bg-slate-50 text-slate-700',
-                      )}
-                    >
-                      {skill}
-                    </button>
-                  ))}
-                </div>
-                {errors.skills ? <p className="text-xs text-red-400">{errors.skills.message}</p> : null}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Почему именно тебя необходимо взять?</label>
-                <textarea
-                  {...register('motivation')}
-                  rows={5}
-                  className={cn(fieldClass, 'resize-none')}
-                  placeholder="Расскажите о своем опыте, проектах и ожиданиях от школы..."
+          <div className={cn('rounded-[32px] border border-slate-200 bg-white', isSubmitted ? 'flex min-h-[900px] items-center p-8 md:min-h-[980px] md:p-12 lg:p-16' : 'p-6 md:p-10 lg:p-14')}>
+            {isSubmitted ? (
+              <div className="mx-auto w-full max-w-3xl text-center">
+                <SectionTitle
+                  label="Регистрация"
+                  title="Спасибо, заявка отправлена"
+                  subtitle="Подключитесь к Telegram-чату школы: там будет публиковаться вся организационная информация и дальнейшие обновления."
                 />
-                {errors.motivation ? <p className="text-xs text-red-400">{errors.motivation.message}</p> : null}
-              </div>
 
-              <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
-                <label className="flex items-start gap-4">
-                  <input type="checkbox" {...register('consent')} className="mt-1 h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary" />
-                  <span className="text-sm leading-relaxed text-slate-600">
-                    Я подтверждаю, что являюсь гражданином Российской Федерации и даю согласие на обработку моих персональных данных в соответствии с{' '}
-                    <Link to="/privacy" target="_blank" rel="noreferrer" className="text-[#0271FF] hover:underline">
-                      Политикой конфиденциальности
-                    </Link>{' '}
-                    и соглашаюсь с{' '}
-                    <Link to="/rules" target="_blank" rel="noreferrer" className="text-[#0271FF] hover:underline">
-                      Положением о проведении состязания
-                    </Link>
-                    .
-                  </span>
-                </label>
-                {errors.consent ? <p className="mt-3 text-xs text-red-400">{errors.consent.message}</p> : null}
-              </div>
+                <a
+                  href={TELEGRAM_CHAT_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0271FF] px-6 py-3 text-sm font-semibold text-white"
+                >
+                  <TelegramIcon className="h-5 w-5" />
+                  Перейти в Telegram-чат
+                </a>
 
-              <button type="submit" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-5 text-lg font-semibold text-slate-950">
-                Отправить заявку
-                <ChevronRight className="h-5 w-5" />
-              </button>
-            </form>
+                <div className="mt-10 space-y-5 border-t border-slate-200 pt-8 text-left">
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">20 апреля</p>
+                    <p className="mt-1 text-lg font-semibold tracking-[-0.03em] text-slate-950">Завершение регистрации</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">21–25 апреля</p>
+                    <p className="mt-1 text-lg font-semibold tracking-[-0.03em] text-slate-950">Отбор участников</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                      Рассмотрение заявок и проведение собеседований. Экспертная комиссия оценивает мотивацию и уровень подготовки участников. В отдельных случаях проводится краткое дистанционное собеседование.
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-500">до 26 апреля</p>
+                    <p className="mt-1 text-lg font-semibold tracking-[-0.03em] text-slate-950">Публикация результатов</p>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                      Объявление списка участников. Участники получат уведомление по электронной почте.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                <SectionTitle
+                  label="Регистрация"
+                  title="Заполни анкету и стань частью весенней школы"
+                  subtitle="Заполни анкету, чтобы стать частью весенней школы. Мы ищем мотивированных студентов, готовых к интенсивной работе. Количество мест ограничено!"
+                />
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                <div className="grid gap-5 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Фамилия</label>
+                    <input {...register('lastName')} className={fieldClass} />
+                    {errors.lastName ? <p className="text-xs text-red-400">{errors.lastName.message}</p> : null}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Имя</label>
+                    <input {...register('firstName')} className={fieldClass} />
+                    {errors.firstName ? <p className="text-xs text-red-400">{errors.firstName.message}</p> : null}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Отчество</label>
+                    <input {...register('middleName')} className={fieldClass} />
+                  </div>
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Email</label>
+                    <input type="email" {...register('email')} placeholder="example@mail.ru" className={fieldClass} />
+                    {errors.email ? <p className="text-xs text-red-400">{errors.email.message}</p> : null}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Телефон</label>
+                    <input
+                      type="tel"
+                      {...register('phone')}
+                      placeholder="+7 (999) 999-99-99"
+                      onChange={(e) => {
+                        let value = e.target.value.replace(/\D/g, '');
+                        if (value.startsWith('7')) value = value.slice(1);
+                        if (value.length > 10) value = value.slice(0, 10);
+
+                        let formatted = '+7';
+                        if (value.length > 0) formatted += ` (${value.slice(0, 3)}`;
+                        if (value.length > 3) formatted += `) ${value.slice(3, 6)}`;
+                        if (value.length > 6) formatted += `-${value.slice(6, 8)}`;
+                        if (value.length > 8) formatted += `-${value.slice(8, 10)}`;
+
+                        setValue('phone', formatted, { shouldValidate: true });
+                      }}
+                      className={fieldClass}
+                    />
+                    {errors.phone ? <p className="text-xs text-red-400">{errors.phone.message}</p> : null}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Telegram</label>
+                    <input {...register('telegram')} placeholder="@username" className={fieldClass} />
+                    {errors.telegram ? <p className="text-xs text-red-400">{errors.telegram.message}</p> : null}
+                  </div>
+                </div>
+
+                <div className="grid gap-5 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Дата рождения</label>
+                    <input type="date" {...register('birthDate')} className={fieldClass} />
+                    {errors.birthDate ? <p className="text-xs text-red-400">{errors.birthDate.message}</p> : null}
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">ВУЗ</label>
+                    <select {...register('university')} className={fieldClass}>
+                      <option value="МАИ">МАИ</option>
+                      <option value="Финуниверситет">Финансовый университет</option>
+                    </select>
+                  </div>
+                </div>
+
+                <AnimatePresence mode="wait">
+                  {selectedUniversity === 'МАИ' ? (
+                    <motion.div
+                      key="mai"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="grid gap-5 md:grid-cols-2"
+                    >
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Институт / Факультет</label>
+                        <select {...register('maiFaculty')} className={fieldClass}>
+                          {MAI_FACULTIES.map((faculty) => (
+                            <option key={faculty} value={faculty}>
+                              {faculty}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Учебная группа</label>
+                        <input {...register('maiGroup')} placeholder="М8О-101Б-22" className={fieldClass} />
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="fin"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="space-y-2"
+                    >
+                      <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Учебная группа</label>
+                      <input {...register('finGroup')} className={fieldClass} />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <div className="space-y-4">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Ваши навыки</label>
+                  <div className="flex flex-wrap gap-3">
+                    {SKILLS.map((skill, index) => (
+                      <button
+                        key={skill}
+                        type="button"
+                        onClick={() => toggleSkill(skill)}
+                        className={cn(
+                          'rounded-full border px-4 py-2 text-sm font-medium transition-colors duration-150',
+                          selectedSkills?.includes(skill)
+                            ? index % 4 === 0
+                              ? 'border-[#0271FF] bg-[#0271FF] text-white'
+                              : index % 4 === 1
+                                ? 'border-[#F25292] bg-[#F25292] text-white'
+                                : index % 4 === 2
+                                  ? 'border-[#00F78B] bg-[#00F78B] text-slate-950'
+                                  : 'border-[#FDE12D] bg-[#FDE12D] text-slate-950'
+                            : 'border-slate-200 bg-slate-50 text-slate-700',
+                        )}
+                      >
+                        {skill}
+                      </button>
+                    ))}
+                  </div>
+                  {errors.skills ? <p className="text-xs text-red-400">{errors.skills.message}</p> : null}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Почему именно тебя необходимо взять?</label>
+                  <textarea
+                    {...register('motivation')}
+                    rows={5}
+                    className={cn(fieldClass, 'resize-none')}
+                    placeholder="Расскажите о своем опыте, проектах и ожиданиях от школы..."
+                  />
+                  {errors.motivation ? <p className="text-xs text-red-400">{errors.motivation.message}</p> : null}
+                </div>
+
+                <div className="rounded-[24px] border border-slate-200 bg-slate-50 p-5">
+                  <label className="flex items-start gap-4">
+                    <input type="checkbox" {...register('consent')} className="mt-1 h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary" />
+                    <span className="text-sm leading-relaxed text-slate-600">
+                      Я подтверждаю, что являюсь гражданином Российской Федерации и даю согласие на обработку моих персональных данных в соответствии с{' '}
+                      <Link to="/privacy" target="_blank" rel="noreferrer" className="text-[#0271FF] hover:underline">
+                        Политикой конфиденциальности
+                      </Link>{' '}
+                      и соглашаюсь с{' '}
+                      <Link to="/rules" target="_blank" rel="noreferrer" className="text-[#0271FF] hover:underline">
+                        Положением о проведении состязания
+                      </Link>
+                      .
+                    </span>
+                  </label>
+                  {errors.consent ? <p className="mt-3 text-xs text-red-400">{errors.consent.message}</p> : null}
+                </div>
+
+                <button type="submit" className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-8 py-5 text-lg font-semibold text-slate-950">
+                  Отправить заявку
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </form>
+              </>
+            )}
           </div>
         </section>
 
@@ -978,6 +1058,10 @@ function LandingPage() {
               </p>
             </div>
             <div className="flex flex-col gap-3 text-sm text-slate-600">
+              <a href={TELEGRAM_CHAT_URL} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-slate-950">
+                <TelegramIcon className="h-4 w-4" />
+                Telegram-чат школы
+              </a>
               <Link to="/privacy" target="_blank" rel="noreferrer" className="hover:text-slate-950">Политика конфиденциальности</Link>
               <Link to="/rules" target="_blank" rel="noreferrer" className="hover:text-slate-950">Положение о состязании</Link>
             </div>
