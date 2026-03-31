@@ -1,6 +1,64 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Download } from 'lucide-react';
+
+const sections = [
+  {
+    title: 'Требования к участникам',
+    items: [
+      'К участию допускаются студенты и аспиранты образовательных организаций, соответствующие требованиям организаторов.',
+      'На момент начала школы участнику должно быть не менее 18 лет.',
+      'Статус участника подтверждается после заполнения регистрационной формы и получения подтверждения от организаторов.',
+    ],
+  },
+  {
+    title: 'Порядок участия',
+    items: [
+      'Для участия необходимо заполнить регистрационную форму, размещенную на официальном сайте школы.',
+      'Организаторы вправе запросить дополнительные сведения и документы, необходимые для рассмотрения заявки.',
+      'Решение о допуске к участию принимается организаторами.',
+      'Организаторы вправе отказать в допуске к участию без объяснения причин.',
+    ],
+  },
+  {
+    title: 'Формат работы',
+    items: [
+      'Работа над задачами осуществляется в командах численностью от 2 до 4 человек.',
+      'Формирование команд допускается до начала школы самостоятельно или при содействии оргкомитета.',
+      'Приступать к выполнению задачи до официального начала школы не допускается.',
+      'В период проведения школы предусмотрены контрольные точки и финальная защита проектов.',
+    ],
+  },
+  {
+    title: 'Организационные условия',
+    items: [
+      'Участник самостоятельно обеспечивает наличие ноутбука, зарядного устройства и необходимого программного обеспечения.',
+      'Организаторы предоставляют доступ к сети Wi-Fi; при недостаточном качестве соединения участник самостоятельно обеспечивает доступ в интернет.',
+      'Место проведения школы: учебно-оздоровительный комплекс «Лесное озеро».',
+      'Участники обязаны соблюдать правила площадки проведения и требования организаторов.',
+    ],
+  },
+  {
+    title: 'Правила поведения',
+    items: [
+      'Не допускаются оскорбительные высказывания, ненормативная лексика и иные формы некорректного поведения.',
+      'Не допускаются употребление и демонстрация алкогольной, табачной продукции и иных запрещенных веществ.',
+      'Запрещены действия, способные повлиять на работу цифровых сервисов и инфраструктуры мероприятия.',
+      'Не допускается воздействие на членов жюри вне установленного порядка взаимодействия.',
+      'Покидать территорию проведения мероприятия разрешается только с предварительного согласования с организаторами.',
+    ],
+  },
+  {
+    title: 'Подведение итогов',
+    items: [
+      'К участию в финале допускаются команды, успешно прошедшие контрольные точки.',
+      'Оценка проектов осуществляется жюри в соответствии с критериями, установленными для конкретной задачи.',
+      'Все участники школы получают диплом участника.',
+      'Победители и призеры определяются по итогам финальной оценки жюри.',
+      'Оргкомитет вправе установить дополнительные призы и номинации.',
+    ],
+  },
+] as const;
 
 const CompetitionRules: React.FC = () => {
   useEffect(() => {
@@ -8,15 +66,51 @@ const CompetitionRules: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground py-24 px-6">
-      <div className="max-w-4xl mx-auto">
-        <Link to="/" className="inline-flex items-center text-primary hover:underline mb-12">
-          <ArrowLeft className="w-4 h-4 mr-2" />
+    <div className="min-h-screen bg-background px-6 py-24 text-foreground">
+      <div className="mx-auto max-w-4xl">
+        <Link to="/" className="mb-12 inline-flex items-center text-primary hover:underline">
+          <ArrowLeft className="mr-2 h-4 w-4" />
           Вернуться на главную
         </Link>
-        
-        <h1 className="text-4xl font-bold mb-12 leading-tight">Положение о проведении интеллектуального состязания «Весенняя школа ИТ и ИИ 2026»</h1>
-        
+
+        <div className="rounded-[32px] border border-slate-200 bg-white p-8 md:p-12">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500">
+            Положение
+          </p>
+          <h1 className="mt-4 text-4xl font-bold leading-tight tracking-[-0.05em] md:text-5xl">
+            Краткая версия положения о проведении школы
+          </h1>
+          <p className="mt-6 max-w-3xl text-base leading-relaxed text-slate-600">
+            На странице приведены основные условия участия, которые необходимо учитывать при подаче
+            заявки и участии в мероприятии. Полная версия документа доступна для скачивания отдельно.
+          </p>
+
+          <a
+            href="/docs/polozhenie-vesennyaya-shkola-it-ii-2026.docx"
+            download
+            target="_blank"
+            rel="noreferrer"
+            className="mt-8 inline-flex items-center gap-2 rounded-full border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-950 transition-colors hover:border-slate-950"
+          >
+            Скачать полное положение
+            <Download className="h-4 w-4" />
+          </a>
+
+          <div className="mt-10 grid gap-4">
+            {sections.map((section) => (
+              <section key={section.title} className="rounded-[28px] border border-slate-200 p-6 md:p-7">
+                <h2 className="text-2xl font-semibold tracking-[-0.04em] text-slate-950">
+                  {section.title}
+                </h2>
+                <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-slate-600 md:text-base">
+                  {section.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

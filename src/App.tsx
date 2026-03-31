@@ -32,9 +32,6 @@ import vitLogo from './static/vkusnoitochka.png';
 import t1Logo from './static/T1_Logo.png';
 import yandexCloudLogo from './static/yc_logo.png';
 
-import ermolin from './static/Ermolin.png';
-
-
 const registrationSchema = z.object({
   lastName: z.string().min(2, 'Минимум 2 символа'),
   firstName: z.string().min(2, 'Минимум 2 символа'),
@@ -170,8 +167,8 @@ const TIMELINE_GROUPS = [
 ];
 
 const EXPERTS = [
-  { name: 'Александр Волков', role: 'Lead Data Scientist', company: 'Технологии будущего', img: ermolin },
-  { name: 'Екатерина Морозова', role: 'AI Research Director', company: 'Цифровые решения', img: ermolin },
+  { name: 'Алексей Ермолин', role: 'Начальник отдела автоматизации', company: 'ПАО "Банк ПСБ"', img: '' },
+  { name: 'Никита Башлыков', role: 'должность должность', company: 'ПАО "Банк ПСБ"', img: '' },
   { name: 'Дмитрий Лебедев', role: 'Senior ML Engineer', company: 'Инновационные системы', img: '' },
   { name: 'Анна Григорьева', role: 'Product Manager', company: 'Технологии развития', img: '' },
   { name: 'Максим Соколов', role: 'Data Architect', company: 'Аналитические платформы', img: '' },
@@ -369,9 +366,6 @@ function LandingPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55 }}
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500">
-              Весенняя школа 2026
-            </p>
             <p className="mt-4 max-w-3xl text-2xl font-semibold leading-[1.05] tracking-[-0.04em] text-slate-950 md:text-3xl">
               Школа ИТ и искусственного интеллекта
             </p>
@@ -890,11 +884,11 @@ function LandingPage() {
                   <input type="checkbox" {...register('consent')} className="mt-1 h-5 w-5 rounded border-slate-300 text-primary focus:ring-primary" />
                   <span className="text-sm leading-relaxed text-slate-600">
                     Я даю согласие на обработку моих персональных данных в соответствии с{' '}
-                    <Link to="/privacy" className="text-blue-400 hover:underline">
+                    <Link to="/privacy" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">
                       Политикой конфиденциальности
                     </Link>{' '}
                     и соглашаюсь с{' '}
-                    <Link to="/rules" className="text-blue-400 hover:underline">
+                    <Link to="/rules" target="_blank" rel="noreferrer" className="text-blue-400 hover:underline">
                       Положением о проведении состязания
                     </Link>
                     .
@@ -963,8 +957,8 @@ function LandingPage() {
               </p>
             </div>
             <div className="flex flex-col gap-3 text-sm text-slate-600">
-              <Link to="/privacy" className="hover:text-slate-950">Политика конфиденциальности</Link>
-              <Link to="/rules" className="hover:text-slate-950">Положение о состязании</Link>
+              <Link to="/privacy" target="_blank" rel="noreferrer" className="hover:text-slate-950">Политика конфиденциальности</Link>
+              <Link to="/rules" target="_blank" rel="noreferrer" className="hover:text-slate-950">Положение о состязании</Link>
             </div>
           </div>
 
