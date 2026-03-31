@@ -393,9 +393,9 @@ function LandingPage() {
               </span>
               <span className="block">в проект</span>
             </h1>
-            <p className="mt-7 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
+            {/* <p className="mt-7 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
               Проектно-образовательный интенсив, объединяющий хакатон, форум и нетворкинг для лучших студентов.
-            </p>
+            </p> */}
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <button
@@ -424,6 +424,9 @@ function LandingPage() {
               <h2 className="mt-6 max-w-4xl text-5xl font-semibold leading-[0.88] tracking-[-0.08em] sm:text-6xl md:text-7xl lg:text-[6.3rem]">
                 8-13 мая 2026
               </h2>
+              <p className="mt-5 text-lg font-semibold leading-relaxed tracking-[-0.03em]">
+                Учебно-оздоровительный комплекс «Лесное озеро», Московская область
+              </p>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
